@@ -1,50 +1,60 @@
 import React, {Fragment} from 'react';
 import ReactDOM from 'react-dom';
 
-class Audio extends React.Component {
+class PlayButton extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            playing: false,
-            context: null,
-            audioElement: null,
+            playing: false
         }
     }
 
-    componentDidMount = () => {
-        this.setState((state) => {
-            state.context = new AudioContext();
-            state.audioElement = document.querySelector("#audio-element");
-            const track = this.state.context.createMediaElementSource(state.audioElement);
-            track.connect(state.context.destination);
-        })
-    }
-
-    componentWillUnmount = () => {
-        this.state.context.close();
-    }
-
-    togglePlayback = () => {
-        const context = this.state.context;
-        console.log(context);
-        if (context.state === 'suspended') {
-            this.state.audioElement.play();
-            context.resume();
-        }
-        if (context.state === 'running') {
-            context.suspend();
-        }
+    handleClick = () => {
+        this.props.playbackToggleRequested();
         this.setState({
             playing: !this.state.playing
         });
     }
 
     render() {
-        const buttonSays = this.state.playing ? 'Pause' : 'Play';
+        const buttonText = this.state.playing ? 'Pause' : 'Play';
+        return (<button onClick={this.handleClick}>{buttonText}</button>);
+    }
+}
+
+class Audio extends React.Component {
+    constructor(props) {
+        super(props);
+        this.context = null
+        this.audioElement = null
+    }
+
+    componentDidMount = () => {
+        this.context = new AudioContext();
+        this.audioElement = document.querySelector("#audio-element");
+        const track = this.context.createMediaElementSource(this.audioElement);
+        track.connect(this.context.destination);
+    }
+
+    componentWillUnmount = () => {
+        this.context.close();
+    }
+
+    togglePlayback = () => {
+        if (this.context.state === 'suspended') {
+            this.audioElement.play();
+            this.context.resume();
+        }
+        if (this.context.state === 'running') {
+            this.context.suspend();
+        }
+    }
+
+    render() {
         return (
             <Fragment>
+                <PlayButton playbackToggleRequested={this.togglePlayback}/>
                 <audio src={"kda.mp3"} id={"audio-element"}></audio>
-                <button onClick={this.togglePlayback}>{buttonSays}</button>
             </Fragment>
         )
     };
