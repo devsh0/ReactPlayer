@@ -1,5 +1,20 @@
 import React, {Fragment} from 'react';
 import ReactDOM from 'react-dom';
+import './index.css';
+
+class SeekSlider extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        return (
+            <div className={"seek-slider"}>
+                <input type="range" min="1" max="100" step="1" />
+            </div>
+        );
+    }
+}
 
 class PlayButton extends React.Component {
     constructor(props) {
@@ -10,7 +25,7 @@ class PlayButton extends React.Component {
     }
 
     handleClick = () => {
-        this.props.playbackToggleRequested();
+        this.props.onPlaybackToggleRequested();
         this.setState({
             playing: !this.state.playing
         });
@@ -22,18 +37,31 @@ class PlayButton extends React.Component {
     }
 }
 
-class Audio extends React.Component {
+class Player extends React.Component {
     constructor(props) {
         super(props);
         this.context = null
-        this.audioElement = null
+        this.bufferSource = null
     }
 
     componentDidMount = () => {
         this.context = new AudioContext();
-        this.audioElement = document.querySelector("#audio-element");
-        const track = this.context.createMediaElementSource(this.audioElement);
-        track.connect(this.context.destination);
+        this.bufferSource = this.context.createBufferSource();
+        fetch("./kda.mp3").then((response) => {
+            if (response.status === 200) {
+                console.log("Audio data loaded!");
+                return response.arrayBuffer();
+            }
+            throw Error("something went horribly wrong!");
+        }).then((buffer) => {
+            return this.context.decodeAudioData(buffer);
+        }).then((decodedData) => {
+            this.bufferSource.buffer = decodedData;
+            this.bufferSource.connect(this.context.destination);
+            this.bufferSource.start(0);
+        }).catch((error) => {
+            console.log(error.message);
+        });
     }
 
     componentWillUnmount = () => {
@@ -41,8 +69,10 @@ class Audio extends React.Component {
     }
 
     togglePlayback = () => {
+        console.log(`Song Length: ${this.bufferSource.buffer.duration}`);
+        console.log(`Played Duration: ${this.context.currentTime}`);
+        
         if (this.context.state === 'suspended') {
-            this.audioElement.play();
             this.context.resume();
         }
         if (this.context.state === 'running') {
@@ -53,14 +83,13 @@ class Audio extends React.Component {
     render() {
         return (
             <Fragment>
-                <PlayButton playbackToggleRequested={this.togglePlayback}/>
-                <audio src={"kda.mp3"} id={"audio-element"}></audio>
+                <SeekSlider />
+                <PlayButton onPlaybackToggleRequested={this.togglePlayback}/>
             </Fragment>
         )
     };
 }
 
-
 ReactDOM.render(
-    <Audio/>
+    <Player/>
     , document.getElementById('root'));
