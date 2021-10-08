@@ -1,5 +1,4 @@
-.seekSlider {
+.seek-slider input {
     width: 400px;
-    height: 20px;
     background: teal;
 }
