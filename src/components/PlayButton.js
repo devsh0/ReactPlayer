@@ -1,13 +1,8 @@
-import React, {useState} from "react";
+import React, {useContext} from "react";
+import PlayerContext from "./PlayerContext";
 
 export default function PlayButton(props) {
-    const [isPlaying, setIsPlaying] = useState(false);
-
-    const handleClick = () => {
-        props.onPlaybackToggleRequested();
-        setIsPlaying(!isPlaying);
-    }
-
-    const buttonText = isPlaying ? 'Pause' : 'Play';
-    return (<button onClick={handleClick}>{buttonText}</button>);
+    const {playing} = useContext(PlayerContext);
+    const buttonText = playing ? 'Pause' : 'Play';
+    return (<button onClick={props.onPlaybackToggleRequested}>{buttonText}</button>);
 }

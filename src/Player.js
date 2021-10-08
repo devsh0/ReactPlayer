@@ -9,8 +9,43 @@ export default class Player extends React.Component {
         super(props);
         this.state = {
             context: null,
-            bufferSource: null
+            bufferSource: null,
+            shared: {
+                duration: 0,
+                currentTime: 0,
+                playing: false,
+            }
         }
+        this.intervalId = 0;
+    }
+
+    resumePlayback = () => {
+        const state = this.state;
+        state.context.resume();
+        const updateSharedState = (state) => {
+            const shared = Object.create(state);
+            shared.duration = state.bufferSource.buffer.duration;
+            shared.currentTime = state.context.currentTime;
+            shared.playing = true;
+            return {shared: shared};
+        }
+
+        this.intervalId = setInterval(() => {
+            this.setState(updateSharedState);
+        }, 50);
+    }
+
+    intervalIdResetHelper = () => {
+        clearInterval(this.intervalId);
+        this.intervalId = 0;
+    }
+
+    pausePlayback = () => {
+        this.state.context.suspend();
+        this.intervalIdResetHelper();
+        const state = Object.create(this.state);
+        state.shared.playing = false;
+        this.setState(state);
     }
 
     loadAudio = async () => {
@@ -24,6 +59,7 @@ export default class Player extends React.Component {
         bufferSource.buffer = await context.decodeAudioData(arrayBuffer);
         bufferSource.connect(context.destination);
         bufferSource.start(0);
+
         this.setState({
             context: context,
             bufferSource: bufferSource
@@ -38,19 +74,13 @@ export default class Player extends React.Component {
 
     componentWillUnmount = () => {
         this.state.context.close();
+        clearInterval(this.intervalId);
     }
 
     togglePlayback = () => {
-        this.setState((state) => {
-            const context = state.context;
-            if (context.state === 'suspended') {
-                context.resume();
-                return;
-            }
-
-            context.suspend();
-            return {context: context};
-        })
+        if (this.state.shared.playing)
+            this.pausePlayback();
+        else this.resumePlayback();
     }
 
     render() {
@@ -58,7 +88,7 @@ export default class Player extends React.Component {
             return <span>Loading...</span>;
 
         return (
-            <PlayerContext.Provider value={this.state}>
+            <PlayerContext.Provider value={this.state.shared}>
                 <SeekSlider/>
                 <PlayButton onPlaybackToggleRequested={this.togglePlayback}/>
             </PlayerContext.Provider>
