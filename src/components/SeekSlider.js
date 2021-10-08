@@ -1,24 +1,12 @@
-import React from "react";
+import React, {useContext} from "react";
 import PlayerContext from "./PlayerContext";
 
-export default class SeekSlider extends React.Component {
-    /*static contextType = PlayerState;*/
-
-    constructor(props) {
-        super(props);
-    }
-
-    componentDidMount = () => {
-        console.log(this.context);
-    }
-
-    render() {
-        return (
-            <div className={"seek-slider"}>
-                <input type="range" min="1" max="100" step="1"/>
-            </div>
-        );
-    }
+export default function SeekSlider() {
+    const {bufferSource} = useContext(PlayerContext);
+    return (
+        <div className={"seek-slider"}>
+            <input type="range" min="1" max="100" step="1"/>
+            <p>Song duration: {bufferSource.buffer.duration / 60}</p>
+        </div>
+    );
 }
-
-SeekSlider.contextType = PlayerContext;

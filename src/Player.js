@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react';
+import React from 'react';
 import PlayButton from "./components/PlayButton";
 import SeekSlider from "./components/SeekSlider";
 import PlayerContext from "./components/PlayerContext";
@@ -8,7 +8,7 @@ export default class Player extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            context: new AudioContext(),
+            context: null,
             bufferSource: null
         }
     }
@@ -19,14 +19,15 @@ export default class Player extends React.Component {
         if (response.status === 200)
             arrayBuffer = await response.arrayBuffer();
 
-        // Not sure if it's okay to access `context` from state and do things with it outside `setState`.
-        // But I can't seem to find any visible side-effects, so here it'll stay.
-        const state = this.state;
-        const bufferSource = state.context.createBufferSource();
-        bufferSource.buffer = await state.context.decodeAudioData(arrayBuffer);
-        bufferSource.connect(state.context.destination);
+        const context = new AudioContext();
+        const bufferSource = context.createBufferSource();
+        bufferSource.buffer = await context.decodeAudioData(arrayBuffer);
+        bufferSource.connect(context.destination);
         bufferSource.start(0);
-        this.setState({bufferSource: bufferSource});
+        this.setState({
+            context: context,
+            bufferSource: bufferSource
+        });
     }
 
     componentDidMount = () => {
@@ -58,10 +59,8 @@ export default class Player extends React.Component {
 
         return (
             <PlayerContext.Provider value={this.state}>
-                <Fragment>
-                    <SeekSlider/>
-                    <PlayButton onPlaybackToggleRequested={this.togglePlayback}/>
-                </Fragment>
+                <SeekSlider/>
+                <PlayButton onPlaybackToggleRequested={this.togglePlayback}/>
             </PlayerContext.Provider>
         )
     };

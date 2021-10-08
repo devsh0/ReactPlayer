@@ -1,22 +1,13 @@
-import React from "react";
+import React, {useState} from "react";
 
-export default class PlayButton extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            playing: false
-        }
+export default function PlayButton(props) {
+    const [isPlaying, setIsPlaying] = useState(false);
+
+    const handleClick = () => {
+        props.onPlaybackToggleRequested();
+        setIsPlaying(!isPlaying);
     }
 
-    handleClick = () => {
-        this.props.onPlaybackToggleRequested();
-        this.setState({
-            playing: !this.state.playing
-        });
-    }
-
-    render() {
-        const buttonText = this.state.playing ? 'Pause' : 'Play';
-        return (<button onClick={this.handleClick}>{buttonText}</button>);
-    }
+    const buttonText = isPlaying ? 'Pause' : 'Play';
+    return (<button onClick={handleClick}>{buttonText}</button>);
 }
