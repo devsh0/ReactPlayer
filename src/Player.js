@@ -23,7 +23,7 @@ export default class Player extends React.Component {
         const state = this.state;
         state.context.resume();
         const updateSharedState = (state) => {
-            const shared = Object.create(state);
+            const shared = this.state;
             shared.duration = state.bufferSource.buffer.duration;
             shared.currentTime = state.context.currentTime;
             shared.playing = true;
@@ -43,8 +43,24 @@ export default class Player extends React.Component {
     pausePlayback = () => {
         this.state.context.suspend();
         this.intervalIdResetHelper();
-        const state = Object.create(this.state);
+        const state = this.state;
         state.shared.playing = false;
+        this.setState(state);
+    }
+
+    sharedDataResetHelper = (state) => {
+        state.shared.duration = 0;
+        state.shared.currentTime = 0;
+        state.shared.playing = false;
+    }
+
+    resetPlayer = () => {
+        const state = this.state;
+        state.context.close();
+        state.context = null;
+        clearInterval(this.intervalId);
+        this.intervalId = 0;
+        this.sharedDataResetHelper(state);
         this.setState(state);
     }
 
@@ -58,8 +74,8 @@ export default class Player extends React.Component {
         const bufferSource = context.createBufferSource();
         bufferSource.buffer = await context.decodeAudioData(arrayBuffer);
         bufferSource.connect(context.destination);
-        bufferSource.start(0);
-
+        bufferSource.start();
+        bufferSource.onended = this.resetPlayer;
         this.setState({
             context: context,
             bufferSource: bufferSource
@@ -73,8 +89,7 @@ export default class Player extends React.Component {
     }
 
     componentWillUnmount = () => {
-        this.state.context.close();
-        clearInterval(this.intervalId);
+        this.resetPlayer();
     }
 
     togglePlayback = () => {
