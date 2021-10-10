@@ -1,20 +1,14 @@
-import {useContext, useState} from "react";
+import {useContext} from "react";
 import PlayerContext from "./PlayerContext";
 import SeekSlider from "./SeekSlider";
 
-export default function Controls(props) {
-    const {sharedState} = useContext(PlayerContext);
-    const [isPlaying, setIsPlaying] = useState(sharedState.playing);
-
-    const togglePlayPause = () => {
-        setIsPlaying(!isPlaying);
-        props.togglePlayPause();
-    }
+export default function Controls() {
+    const {sharedState, handlePlayPause} = useContext(PlayerContext);
 
     return (
         <div id={'audio-controls-container'}>
             <SeekSlider />
-            <button onClick={togglePlayPause}>{isPlaying ? 'Pause' : 'Play'}</button>
+            <button onClick={handlePlayPause}>{sharedState.playing ? 'Pause' : 'Play'}</button>
             <button>Next</button>
             <button>Prev</button>
         </div>
