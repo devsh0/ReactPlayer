@@ -6,6 +6,30 @@ import './index.css';
 export default function Player() {
     const audioElementRef = useRef();
     const sharedStateRef = useRef();
+    const audioContextRef = useRef(null);
+
+    // WebAudio does not expose any API to seek over the media buffer, so we offload seeking to `handleSetPosition`.
+    // `handleSetPosition` implements seeking by changing `HTMLAudioElement.value` property and then invokes this
+    // function to dispose the current AudioContext and cook up a new one. This is required to keep AudioContext
+    // and HTMLAudioElement in sync.
+    function resetAudioContext() {
+        if (audioContextRef.current !== null) {
+            audioContextRef.current.close();
+        }
+        audioContextRef.current = new AudioContext();
+        const audioContext = audioContextRef.current;
+        
+        // Capture stream instead of binding directly to the HTMLAudioElement. Once bound to an AudioContext,
+        // the chain between the context and the element doesn't break even when the context is destroyed.
+        // Furthermore, an HTMLAudioElement can remain bound to only a single AudioContext at any given time.
+        // See https://github.com/WebAudio/web-audio-api/issues/1202 for more info.
+        const track = audioContext.createMediaStreamSource(audioElementRef.current.captureStream());
+        const gainNode = audioContext.createGain();
+        gainNode.gain.value = 0;
+        track.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        return audioContext;
+    }
 
     const [sharedState, setSharedState] = useState({
         duration: 0,
@@ -29,14 +53,25 @@ export default function Player() {
         requestAnimationFrame(animate);
     }, []);
 
+    const resume = () => {
+        audioContextRef.current.resume();
+        audioElementRef.current.play();
+    }
+
+    const pause = () => {
+        audioContextRef.current.suspend();
+        audioElementRef.current.pause();
+    }
+
     const handleTogglePlayPause = () => {
         const newSharedState = {...sharedState};
         if (sharedState.playing) {
-            audioElementRef.current.pause();
+            pause();
+            console.log(`${audioElementRef.current.currentTime} and ${audioContextRef.current.currentTime}`);
             newSharedState.playing = false;
             updateSharedState(newSharedState);
         } else {
-            audioElementRef.current.play();
+            resume();
             newSharedState.playing = true;
             updateSharedState(newSharedState);
         }
@@ -47,19 +82,22 @@ export default function Player() {
         newSharedState.duration = audioElementRef.current.duration;
         newSharedState.position = audioElementRef.current.currentTime;
         updateSharedState(newSharedState)
+        resetAudioContext();
     }
 
     const handleSetPosition = (newPosition) => {
         audioElementRef.current.currentTime = newPosition;
         const newSharedState = {...sharedState};
         newSharedState.position = newPosition;
-        updateSharedState(newSharedState);
+        updateSharedState(newSharedState)
+        resetAudioContext();
     }
 
     const sharedContext = {sharedState, handleSetPosition}
     return (
         <PlayerContext.Provider value={sharedContext}>
-            <audio ref={audioElementRef} src={'./kda.mp3'} preload={'metadata'}
+            <audio ref={audioElementRef} src={'./kda.mp3'}
+                   preload={'metadata'}
                    onLoadedMetadata={handleAudioMetadataLoaded}/>
             <Controls togglePlayPause={handleTogglePlayPause}/>
         </PlayerContext.Provider>
