@@ -5,6 +5,7 @@ import './index.css';
 
 export default function Player() {
     const audioElementRef = useRef();
+    const sharedStateRef = useRef();
 
     const [sharedState, setSharedState] = useState({
         duration: 0,
@@ -12,37 +13,54 @@ export default function Player() {
         playing: false,
     })
 
+    const updateSharedState = (newSharedState) => {
+        setSharedState(newSharedState);
+        sharedStateRef.current = newSharedState;
+    }
+
+    useEffect(() => {
+        function animate() {
+            const newSharedState = {...(sharedStateRef.current)}
+            newSharedState.position = audioElementRef.current.currentTime;
+            updateSharedState(newSharedState);
+            requestAnimationFrame(animate);
+        }
+
+        requestAnimationFrame(animate);
+    }, []);
+
     const handleTogglePlayPause = () => {
         const newSharedState = {...sharedState};
         if (sharedState.playing) {
             audioElementRef.current.pause();
             newSharedState.playing = false;
-            setSharedState(newSharedState);
+            updateSharedState(newSharedState);
         } else {
             audioElementRef.current.play();
             newSharedState.playing = true;
-            setSharedState(newSharedState);
+            updateSharedState(newSharedState);
         }
     }
 
     const handleAudioMetadataLoaded = () => {
-        const newShared = {...sharedState};
-        newShared.duration = audioElementRef.current.duration;
-        newShared.position = audioElementRef.current.currentTime;
-        setSharedState(newShared);
+        const newSharedState = {...sharedState};
+        newSharedState.duration = audioElementRef.current.duration;
+        newSharedState.position = audioElementRef.current.currentTime;
+        updateSharedState(newSharedState)
     }
 
     const handleSetPosition = (newPosition) => {
         audioElementRef.current.currentTime = newPosition;
         const newSharedState = {...sharedState};
         newSharedState.position = newPosition;
-        setSharedState(newSharedState);
+        updateSharedState(newSharedState);
     }
 
     const sharedContext = {sharedState, handleSetPosition}
     return (
         <PlayerContext.Provider value={sharedContext}>
-            <audio ref={audioElementRef} src={'./kda.mp3'} preload={'metadata'} onLoadedMetadata={handleAudioMetadataLoaded}/>
+            <audio ref={audioElementRef} src={'./kda.mp3'} preload={'metadata'}
+                   onLoadedMetadata={handleAudioMetadataLoaded}/>
             <Controls togglePlayPause={handleTogglePlayPause}/>
         </PlayerContext.Provider>
     );
