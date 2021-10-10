@@ -9,7 +9,7 @@ export default function Player() {
     const audioContextRef = useRef(null);
 
     // WebAudio does not expose any API to seek over the media buffer, so we offload seeking to `handleSetPosition`.
-    // `handleSetPosition` implements seeking by changing `HTMLAudioElement.value` property and then invokes this
+    // `handleSetPosition` implements seeking by changing the `HTMLAudioElement.value` property and then invokes this
     // function to dispose the current AudioContext and cook up a new one. This is required to keep AudioContext
     // and HTMLAudioElement in sync.
     function resetAudioContext() {
@@ -21,24 +21,30 @@ export default function Player() {
 
         // Capture stream instead of binding directly to the HTMLAudioElement. Once bound to an AudioContext,
         // the chain between the context and the element doesn't break even when the context is destroyed.
-        // Furthermore, an HTMLAudioElement can remain bound to only a single AudioContext at any given time.
+        // Furthermore, an HTMLAudioElement can remain bounded to only one AudioContext at any given time.
         // See https://github.com/WebAudio/web-audio-api/issues/1202 for more info.
         const stream = audioElementRef.current.captureStream()
         const track = audioContext.createMediaStreamSource(stream);
         const gainNode = audioContext.createGain();
-        gainNode.gain.value = 0;
+        gainNode.gain.value = 1;
         track.connect(gainNode);
         gainNode.connect(audioContext.destination);
         return audioContext;
     }
 
-    const [sharedState, setSharedState] = useState({
+    let [sharedState, setSharedState] = useState({
         duration: 0,
         position: 0,
         playing: false
     })
 
-    const updateSharedState = (newSharedState) => {
+    // If `newPosition` is specified, we infer that seeking is intended.
+    const updateSharedState = (newSharedState, newPosition = -1) => {
+        if (newPosition >= 0) {
+            audioElementRef.current.currentTime = newPosition;
+            newSharedState.position = newPosition;
+        }
+        sharedState = newSharedState;
         setSharedState(newSharedState);
         sharedStateRef.current = newSharedState;
     }
@@ -51,17 +57,20 @@ export default function Player() {
             requestAnimationFrame(animate);
         }
 
+        audioElementRef.current.volume = .001;
         requestAnimationFrame(animate);
     }, []);
 
     const resume = () => {
-        audioContextRef.current.resume();
+        // Resuming playing using the existing context fails sometimes.
+        // Let's just create a new one.
+        resetAudioContext();
         audioElementRef.current.play();
     }
 
     const pause = () => {
-        audioContextRef.current.suspend();
         audioElementRef.current.pause();
+        audioContextRef.current.suspend();
     }
 
     const handlePlayPause = () => {
@@ -86,19 +95,16 @@ export default function Player() {
     }
 
     const handleSetPosition = (newPosition) => {
-        audioElementRef.current.currentTime = newPosition;
         const newSharedState = {...sharedState};
-        newSharedState.position = newPosition;
-        updateSharedState(newSharedState)
+        updateSharedState(newSharedState, newPosition)
         resetAudioContext();
     }
 
     const handleSongEnded = () => {
         const newSharedState = {...sharedState}
-        newSharedState.duration = 0;
-        newSharedState.position = 0;
         newSharedState.playing = false;
-        updateSharedState(newSharedState);
+        updateSharedState(newSharedState, 0);
+        resetAudioContext();
     }
 
     const sharedContext = {sharedState, handleSetPosition, handlePlayPause}
