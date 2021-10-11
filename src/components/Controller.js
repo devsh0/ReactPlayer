@@ -7,7 +7,7 @@ const initialControllerState = {
     playing: false
 };
 
-export default function Controller({onStreamMutated}) {
+export default function Controller({onStreamMutated, onResume}) {
     const audioElementRef = useRef();
     const [controllerState, setControllerState] = useState(initialControllerState);
 
@@ -15,8 +15,8 @@ export default function Controller({onStreamMutated}) {
     const handleAudioLoaded = () => {
         const state = {...controllerState};
         state.duration = audioElementRef.current.duration;
-        setControllerState(state);
         audioElementRef.current.volume = .001;
+        setControllerState(state);
         onStreamMutated(audioElementRef.current);
     }
 
@@ -34,9 +34,14 @@ export default function Controller({onStreamMutated}) {
     }
 
     const handlePlayPause = () => {
-        if (controllerState.playing)
+        if (controllerState.playing) {
             audioElementRef.current.pause();
-        else audioElementRef.current.play();
+
+        }
+        else {
+            audioElementRef.current.play();
+            onResume();
+        }
         const state = {...controllerState};
         state.playing = !controllerState.playing;
         setControllerState(state);

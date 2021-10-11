@@ -26,5 +26,9 @@ export default function Player() {
         setAudioContext({observer: !observer});
     }
 
-    return (<Controller onStreamMutated={handleStreamMutation}/>);
+    function handleResume() {
+        audioContext.resume().catch(error => console.log(error));
+    }
+
+    return (<Controller onStreamMutated={handleStreamMutation} onResume={handleResume}/>);
 }
