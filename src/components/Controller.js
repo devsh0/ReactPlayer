@@ -21,7 +21,7 @@ export default function Controller({onStreamMutated}) {
     }
 
     // Mutates the stream captured in `Player#audioContext`.
-    const handleSetPosition = (newPosition) => {
+    const handleSeek = (newPosition) => {
         audioElementRef.current.currentTime = newPosition;
         const state = {...controllerState};
         state.position = newPosition;
@@ -42,10 +42,16 @@ export default function Controller({onStreamMutated}) {
         setControllerState(state);
     }
 
+    const handlePlaybackProgress = (event) => {
+        const state = {...controllerState};
+        state.position = event.target.currentTime;
+        setControllerState(state);
+    }
+
     return (
         <div id={'audio-controls-container'}>
-            <audio ref={audioElementRef} src={'./kda.mp3'} onEnded={handleAudioEnded} onCanPlay={handleAudioLoaded}/>
-            <SeekSlider controllerState={controllerState} onSetPosition={handleSetPosition}/>
+            <audio ref={audioElementRef} src={'./kda.mp3'} onEnded={handleAudioEnded} onCanPlay={handleAudioLoaded} onTimeUpdate={handlePlaybackProgress}/>
+            <SeekSlider controllerState={controllerState} onSeek={handleSeek} audioElement={audioElementRef.current}/>
             <button onClick={handlePlayPause}>{controllerState.playing ? 'Pause' : 'Play'}</button>
         </div>
     )
