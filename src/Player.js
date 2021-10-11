@@ -5,18 +5,15 @@ import './index.css';
 const audioContext = new AudioContext();
 let audioElement = null;
 
-// TODO: we will need a new context to share with Control component.
 export default function Player() {
     const [observer, setAudioContext] = useState(false);
 
     useEffect(() => {
-        console.log('Re-rendered');
         if (audioElement)
             configureAudioContext(audioElement);
     });
 
     function configureAudioContext(audioElement) {
-        console.log(audioContext);
         const stream = audioContext.createMediaStreamSource(audioElement.captureStream());
         const gainNode = audioContext.createGain();
         gainNode.gain.value = 1;
@@ -25,6 +22,7 @@ export default function Player() {
 
     function handleStreamMutation(audioEl) {
         audioElement = audioEl;
+        // How else would I invoke a re-render?
         setAudioContext({observer: !observer});
     }
 
