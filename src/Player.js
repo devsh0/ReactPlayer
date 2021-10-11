@@ -8,10 +8,20 @@ export default function Player() {
     const sharedStateRef = useRef();
     const audioContextRef = useRef(null);
 
-    // WebAudio does not expose any API to seek over the media buffer, so we offload seeking to `handleSetPosition`.
-    // `handleSetPosition` implements seeking by changing the `HTMLAudioElement.value` property and then invokes this
-    // function to dispose the current AudioContext and cook up a new one. This is required to keep AudioContext
-    // and HTMLAudioElement in sync.
+    // WebAudio does not expose any API to seek over the media buffer, so we offload seeking to `HTMLAudioElement`.
+    // `handleSetPosition` implements seeking by changing the `HTMLAudioElement.value` property. This is a nasty
+    // hack because we're allowing playback to be controlled by both: the `HTMLAudioElement` and AudioContext.
+    // Distributing playback control among two separate components like this creates problems sometimes.
+    // When both players are suspended (paused) and a `Play` request's been issued, both would wake up and race to
+    // take control over playback. If AudioContext succeeds, we're in luck. If not, then occasionally AudioContext
+    // is entirely suppressed and all we hear is the mild output from `HTMLAudioElement.play`. To get around this
+    // issue, whenever there is a possibility of AudioContext getting dominated by `HTMLAudioElement`, we dispose
+    // the current AudioContext and cook up a new one. `resetAudioContext` is a helper to clean up the current
+    // AudioContext and prepare a new one. I don't know why this reincarnation of AudioContext solves the problem,
+    // but it does seem to solve it.
+
+    // Ideally, we would want the AudioContext to have exclusive control over playback. But as mentioned, we can't
+    // implement seeking with that approach.
     function resetAudioContext() {
         if (audioContextRef.current !== null) {
             audioContextRef.current.close();
@@ -20,16 +30,15 @@ export default function Player() {
         const audioContext = audioContextRef.current;
 
         // Capture stream instead of binding directly to the HTMLAudioElement. Once bound to an AudioContext,
-        // the chain between the context and the element doesn't break even when the context is destroyed.
-        // Furthermore, an HTMLAudioElement can remain bounded to only one AudioContext at any given time.
-        // See https://github.com/WebAudio/web-audio-api/issues/1202 for more info.
+        // `HTMLAudioElement` does not allow rebinding to other AudioContexts even if the currently bound context
+        // is properly disposed. Furthermore, an HTMLAudioElement can remain bounded to only one AudioContext at
+        // any given time. See https://github.com/WebAudio/web-audio-api/issues/1202 for more info.
         const stream = audioElementRef.current.captureStream()
         const track = audioContext.createMediaStreamSource(stream);
         const gainNode = audioContext.createGain();
         gainNode.gain.value = 1;
         track.connect(gainNode);
         gainNode.connect(audioContext.destination);
-        return audioContext;
     }
 
     let [sharedState, setSharedState] = useState({
@@ -62,9 +71,10 @@ export default function Player() {
     }, []);
 
     const resume = () => {
-        // Resuming playing using the existing context fails sometimes.
+        // Resuming playback using the existing context fails sometimes.
         // Let's just create a new one.
         resetAudioContext();
+        audioContextRef.current.resume();
         audioElementRef.current.play();
     }
 
@@ -97,21 +107,19 @@ export default function Player() {
     const handleSetPosition = (newPosition) => {
         const newSharedState = {...sharedState};
         updateSharedState(newSharedState, newPosition)
-        resetAudioContext();
     }
 
-    const handleSongEnded = () => {
+    const handleAudioEnded = () => {
         const newSharedState = {...sharedState}
         newSharedState.playing = false;
         updateSharedState(newSharedState, 0);
-        resetAudioContext();
     }
 
     const sharedContext = {sharedState, handleSetPosition, handlePlayPause}
     return (
         <PlayerContext.Provider value={sharedContext}>
             <audio ref={audioElementRef} src={'./kda.mp3'}
-                   onEnded={handleSongEnded}
+                   onEnded={handleAudioEnded}
                    preload={'metadata'}
                    onLoadedMetadata={handleAudioMetadataLoaded}/>
             <Controls />
