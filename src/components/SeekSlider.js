@@ -1,14 +1,10 @@
-import {Fragment, useContext} from "react";
-import PlayerContext from "./PlayerContext";
-
-export default function SeekSlider () {
-    const {sharedState, handleSetPosition} = useContext(PlayerContext);
+export default function SeekSlider ({controllerState, onSetPosition}) {
     return (
-        <Fragment>
-        <input type='range' max={sharedState.duration} step='1'
-               value={sharedState.position}
-               onChange={(e) => handleSetPosition(e.target.value)}/>
-            <p>{sharedState.position}</p>
-        </Fragment>
+        <div>
+        <input type='range' max={controllerState.duration} step='1'
+               value={controllerState.position}
+               onChange={(e) => onSetPosition(e.target.value)}/>
+            <p>{controllerState.position}</p>
+        </div>
     );
 }

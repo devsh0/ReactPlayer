@@ -1,12 +1,10 @@
-import React, {useEffect, useRef, useState} from 'react';
-import PlayerContext from "./components/PlayerContext";
-import Controls from "./components/Controls";
+import React, {useState} from 'react';
+import Controller from "./components/Controller";
 import './index.css';
 
+// TODO: we will need a new context to share with Control component.
 export default function Player() {
-    const audioElementRef = useRef();
-    const sharedStateRef = useRef();
-    const audioContextRef = useRef(null);
+    const [audioContext, setAudioContext] = useState(new AudioContext());
 
     // WebAudio does not expose any API to seek over the media buffer, so we offload seeking to `HTMLAudioElement`.
     // `handleSetPosition` implements seeking by changing the `HTMLAudioElement.value` property. This is a nasty
@@ -22,107 +20,32 @@ export default function Player() {
 
     // Ideally, we would want the AudioContext to have exclusive control over playback. But as mentioned, we can't
     // implement seeking with that approach.
-    function resetAudioContext() {
-        if (audioContextRef.current !== null) {
-            audioContextRef.current.close();
-        }
-        audioContextRef.current = new AudioContext();
-        const audioContext = audioContextRef.current;
+    async function resetAudioContext(audioElement) {
+        await audioContext.close();
+        const context = new AudioContext();
 
         // Capture stream instead of binding directly to the HTMLAudioElement. Once bound to an AudioContext,
         // `HTMLAudioElement` does not allow rebinding to other AudioContexts even if the currently bound context
         // is properly disposed. Furthermore, an HTMLAudioElement can remain bounded to only one AudioContext at
         // any given time. See https://github.com/WebAudio/web-audio-api/issues/1202 for more info.
-        const stream = audioElementRef.current.captureStream()
-        const track = audioContext.createMediaStreamSource(stream);
-        const gainNode = audioContext.createGain();
+        const stream = audioElement.captureStream()
+        const track = context.createMediaStreamSource(stream);
+        const gainNode = context.createGain();
         gainNode.gain.value = 1;
-        track.connect(gainNode);
-        gainNode.connect(audioContext.destination);
+        track.connect(gainNode).connect(context.destination);
+        setAudioContext(context);
     }
 
-    let [sharedState, setSharedState] = useState({
-        duration: 0,
-        position: 0,
-        playing: false
-    })
-
-    // If `newPosition` is specified, we infer that seeking is intended.
-    const updateSharedState = (newSharedState, newPosition = -1) => {
-        if (newPosition >= 0) {
-            audioElementRef.current.currentTime = newPosition;
-            newSharedState.position = newPosition;
-        }
-        sharedState = newSharedState;
-        setSharedState(newSharedState);
-        sharedStateRef.current = newSharedState;
-    }
-
-    useEffect(() => {
+    /*useEffect(() => {
         function animate() {
-            const newSharedState = {...(sharedStateRef.current)}
+            const newSharedState = {...getCurrentSharedState()}
             newSharedState.position = audioElementRef.current.currentTime;
-            updateSharedState(newSharedState);
+            updateSharedState(newSharedState, -1);
             requestAnimationFrame(animate);
         }
 
         audioElementRef.current.volume = .001;
         requestAnimationFrame(animate);
-    }, []);
-
-    const resume = () => {
-        // Resuming playback using the existing context fails sometimes.
-        // Let's just create a new one.
-        resetAudioContext();
-        audioContextRef.current.resume();
-        audioElementRef.current.play();
-    }
-
-    const pause = () => {
-        audioElementRef.current.pause();
-        audioContextRef.current.suspend();
-    }
-
-    const handlePlayPause = () => {
-        const newSharedState = {...sharedState};
-        if (sharedState.playing) {
-            pause();
-            newSharedState.playing = false;
-            updateSharedState(newSharedState);
-        } else {
-            resume();
-            newSharedState.playing = true;
-            updateSharedState(newSharedState);
-        }
-    }
-
-    const handleAudioMetadataLoaded = () => {
-        const newSharedState = {...sharedState};
-        newSharedState.duration = audioElementRef.current.duration;
-        newSharedState.position = audioElementRef.current.currentTime;
-        updateSharedState(newSharedState)
-        resetAudioContext();
-    }
-
-    const handleSetPosition = (newPosition) => {
-        const newSharedState = {...sharedState};
-        updateSharedState(newSharedState, newPosition)
-    }
-
-    const handleAudioEnded = () => {
-        const newSharedState = {...sharedState}
-        newSharedState.playing = false;
-        updateSharedState(newSharedState, 0);
-    }
-
-    const sharedContext = {sharedState, handleSetPosition, handlePlayPause}
-    return (
-        <PlayerContext.Provider value={sharedContext}>
-            <audio ref={audioElementRef} src={'./kda.mp3'}
-                   onEnded={handleAudioEnded}
-                   preload={'metadata'}
-                   onLoadedMetadata={handleAudioMetadataLoaded}/>
-            <Controls />
-        </PlayerContext.Provider>
-    );
+    }, []);*/
+    return (<Controller onResume={resetAudioContext}/>);
 }
