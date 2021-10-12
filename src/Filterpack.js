@@ -30,7 +30,7 @@ export default class Filterpack {
         this.lowshelf = new Filter(context, 'lowshelf', this.bands[0], 0);
         this.highshelf = new Filter(context, 'highshelf', this.bands[this.count - 1], 0);
         this.peakingFilterArray = this.bands
-            .filter((f, i) => 0 < i < this.count)
+            .filter((f, i) => i > 0 && i < this.count - 1)
             .map(freq => new Filter(context, 'peaking', freq, 0));
         this.filterArray = [this.lowshelf, ...this.peakingFilterArray, this.highshelf];
     }
@@ -55,7 +55,6 @@ export default class Filterpack {
             this.filterArray[this.count - 1].setGain(gain);
             return;
         }
-
         for (let i = 1; i < this.count - 2; i++) {
             const filter = this.filterArray[i];
             if (frequency < filter.frequency) {
