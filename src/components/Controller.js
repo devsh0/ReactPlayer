@@ -36,7 +36,6 @@ export default function Controller({onStreamMutated, onResume}) {
     const handlePlayPause = () => {
         if (controllerState.playing) {
             audioElementRef.current.pause();
-
         }
         else {
             audioElementRef.current.play();

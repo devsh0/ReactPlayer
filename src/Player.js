@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import Controller from "./components/Controller";
 import './index.css';
 import Filterpack from "./Filterpack";
+import Equalizer from "./components/Equalizer";
 
 const audioContext = new AudioContext();
 const filterpack = new Filterpack(audioContext);
@@ -33,6 +34,7 @@ export default function Player() {
     return (
         <div>
             <Controller onStreamMutated={handleStreamMutation} onResume={handleResume}/>
+            <Equalizer filterpack={filterpack}/>
         </div>
     );
 }

@@ -1,9 +1,51 @@
-.seek-slider input {
-    width: 400px;
-    background: teal;
+.equalizer {
+    display: flex;
+    justify-content: flex-start;
+    height: 300px;
+    border: 1px solid black;
+    user-select: none;
 }
 
-audio {
-    width: 500px;
-    background: #f1f3f4;
+.band-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 8px 2px;
+    background: lightcoral;
+    height: 90%;
+    width: 30px;
+}
+
+.band-container .box {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background: #e4e4e4;
+    height: 90%;
+    max-height: 90%;
+    width: 6px;
+    border-radius: 10px;
+}
+
+.box .fill {
+    position: relative;
+    background: burlywood;
+    height: 50%;
+    border-radius: 10px;
+}
+
+.fill .knob {
+    position: absolute;
+    top: -9px;
+    left: -2px;
+    width: 11px;
+    height: 11px;
+    background: black;
+    border-radius: 50%;
+}
+
+.band-container h6 {
+    margin: 0;
+    text-align: center;
+    padding: 10px;
 }
