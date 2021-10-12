@@ -1,8 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import Controller from "./components/Controller";
 import './index.css';
+import Filterpack from "./Filterpack";
 
 const audioContext = new AudioContext();
+const filterpack = new Filterpack(audioContext);
 let audioElement = null;
 
 export default function Player() {
@@ -15,9 +17,7 @@ export default function Player() {
 
     function configureAudioContext(audioElement) {
         const stream = audioContext.createMediaStreamSource(audioElement.captureStream());
-        const gainNode = audioContext.createGain();
-        gainNode.gain.value = 1;
-        stream.connect(gainNode).connect(audioContext.destination);
+        filterpack.connect(stream, audioContext.destination);
     }
 
     function handleStreamMutation(audioEl) {
