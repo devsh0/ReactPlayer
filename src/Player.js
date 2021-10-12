@@ -30,5 +30,9 @@ export default function Player() {
         audioContext.resume().catch(error => console.log(error));
     }
 
-    return (<Controller onStreamMutated={handleStreamMutation} onResume={handleResume}/>);
+    return (
+        <div>
+            <Controller onStreamMutated={handleStreamMutation} onResume={handleResume}/>
+        </div>
+    );
 }
