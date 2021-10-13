@@ -26,7 +26,7 @@ class Filter {
 export default class Filterpack {
     constructor(context) {
         this.count = 10;
-        this.bands = [31.25, 62.5, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
+        this.bands = [32, 64, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
         this.lowshelf = new Filter(context, 'lowshelf', this.bands[0], 0);
         this.highshelf = new Filter(context, 'highshelf', this.bands[this.count - 1], 0);
         this.peakingFilterArray = this.bands
