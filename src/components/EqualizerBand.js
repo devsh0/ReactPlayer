@@ -1,20 +1,33 @@
 import {useRef} from "react";
 
+const MAX_GAIN = 24; // dB
+
 export default function EqualizerBand({filter}) {
+    const boxRef = useRef();
     const fillRef = useRef();
     const knobRef = useRef();
 
+    const gainToFillHeight = (gain, boxHeight, knobHeightBias) => {
+        const step = (boxHeight - knobHeightBias) / (MAX_GAIN * 2);
+        return (gain + MAX_GAIN) * step;
+    }
+
+    const fillHeightToGain = (fillHeight, boxHeight, knobHeightBias) => {
+        const step = (boxHeight - knobHeightBias) / (MAX_GAIN * 2);
+        return (fillHeight / step) - MAX_GAIN;
+    }
+
     const applyLevel = (displacement) => {
-        const boxElement = fillRef.current.parentNode;
+        const boxHeight = boxRef.current.clientHeight;
         const knobHeightBias = knobRef.current.clientHeight / 2;
-        const heightBound = boxElement.clientHeight - knobHeightBias;
+        const heightBound = boxHeight - knobHeightBias;
         const fillHeight = fillRef.current.clientHeight;
         fillRef.current.style.maxHeight = heightBound + 'px';
         fillRef.current.style.height = (fillHeight + displacement) + 'px';
 
-        const step = (boxElement.clientHeight) / 24;
-        const level = -12 + (fillHeight + knobHeightBias) / step;
-        filter.setGain(level);
+        const gain = fillHeightToGain(fillHeight, boxHeight, knobHeightBias);
+        console.log(gain);
+        filter.setGain(gain);
     }
 
     // To have some way of tweaking the bands in mobile devices.
@@ -52,7 +65,7 @@ export default function EqualizerBand({filter}) {
              onMouseMove={handleMouseMove}
              onMouseLeave={handleDragEnd}
         >
-            <div className={'box'} onMouseDown={handleClickSlide}>
+            <div ref={boxRef} className={'box'} onMouseDown={handleClickSlide}>
                 <div ref={fillRef} className={'fill'}>
                     <div ref={knobRef} className={'knob'}></div>
                 </div>
