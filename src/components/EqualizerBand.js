@@ -4,19 +4,24 @@ export default function EqualizerBand({filter}) {
     const fillRef = useRef();
     const knobRef = useRef();
 
-    const slide = (displacement) => {
+    const applyLevel = (displacement) => {
         const boxElement = fillRef.current.parentNode;
-        const upperBound = boxElement.clientHeight - 10;
-        const fillHeight = Math.min(fillRef.current.clientHeight, upperBound);
+        const knobHeightBias = knobRef.current.clientHeight / 2;
+        const heightBound = boxElement.clientHeight - knobHeightBias;
+        const fillHeight = fillRef.current.clientHeight;
+        fillRef.current.style.maxHeight = heightBound + 'px';
         fillRef.current.style.height = (fillHeight + displacement) + 'px';
 
         const step = (boxElement.clientHeight) / 24;
-        const level = -12 + (fillHeight + 10) / step;
+        const level = -12 + (fillHeight + knobHeightBias) / step;
         filter.setGain(level);
     }
 
-    const handleSlide = (event) => {
-
+    // To have some way of tweaking the bands in mobile devices.
+    const handleClickSlide = (event) => {
+        const fillRect = fillRef.current.getBoundingClientRect();
+        const displacement = fillRect.top - event.clientY;
+        applyLevel(displacement);
     }
 
     let dragging = false;
@@ -36,7 +41,7 @@ export default function EqualizerBand({filter}) {
             const clientY = event.clientY;
             const displacement = previousClientY - clientY;
             previousClientY = clientY;
-            slide(displacement);
+            applyLevel(displacement);
         }
     }
 
@@ -44,11 +49,11 @@ export default function EqualizerBand({filter}) {
         <div className={'band-container'}
              onMouseDown={handleDragStart}
              onMouseUp={handleDragEnd}
-             onMouseLeave={handleDragEnd}
              onMouseMove={handleMouseMove}
+             onMouseLeave={handleDragEnd}
         >
-            <div className={'box'}>
-                <div ref={fillRef} className={'fill'} onClick={handleSlide}>
+            <div className={'box'} onMouseDown={handleClickSlide}>
+                <div ref={fillRef} className={'fill'}>
                     <div ref={knobRef} className={'knob'}></div>
                 </div>
             </div>
