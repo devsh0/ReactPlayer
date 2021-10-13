@@ -5,9 +5,14 @@ export default function EqualizerBand({filter}) {
     const knobRef = useRef();
 
     const slide = (displacement) => {
-        const upperBound = fillRef.current.parentNode.clientHeight - 10;
-        const height = Math.min(fillRef.current.clientHeight, upperBound);
-        fillRef.current.style.height = (height + displacement) + 'px';
+        const boxElement = fillRef.current.parentNode;
+        const upperBound = boxElement.clientHeight - 10;
+        const fillHeight = Math.min(fillRef.current.clientHeight, upperBound);
+        fillRef.current.style.height = (fillHeight + displacement) + 'px';
+
+        const step = (boxElement.clientHeight) / 24;
+        const level = -12 + (fillHeight + 10) / step;
+        filter.setGain(level);
     }
 
     const handleSlide = (event) => {
@@ -17,12 +22,12 @@ export default function EqualizerBand({filter}) {
     let dragging = false;
     let previousClientY = 0;
 
-    const dragStart = (event) => {
+    const handleDragStart = (event) => {
         previousClientY = event.clientY;
         dragging = true;
     }
 
-    const dragEnd = () => {
+    const handleDragEnd = () => {
         dragging = false;
     }
 
@@ -35,12 +40,11 @@ export default function EqualizerBand({filter}) {
         }
     }
 
-    /*<input type='range' max={12} min={-12} step={1} value={value} onChange={handleSlide}/>*/
     return (
         <div className={'band-container'}
-             onMouseDown={dragStart}
-             onMouseUp={dragEnd}
-             onMouseLeave={dragEnd}
+             onMouseDown={handleDragStart}
+             onMouseUp={handleDragEnd}
+             onMouseLeave={handleDragEnd}
              onMouseMove={handleMouseMove}
         >
             <div className={'box'}>
