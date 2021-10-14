@@ -23,6 +23,18 @@
     background: white;
 }
 
+.btn {
+    transition: all ease-in-out 120ms;
+}
+
+.btn:hover {
+    box-shadow: 0 0 2px 1px rgba(0, 0, 0, .8);
+}
+
+.btn.disabled:hover {
+    box-shadow: 0 0 2px rgba(0, 0, 0, 1);
+}
+
 .preset-container .drop-down-container {
     display: flex;
     justify-content: center;
@@ -34,7 +46,7 @@
     font-weight: bold;
 }
 
-.drop-down.disabled {
+.preset-container .btn.disabled {
     background: #f3f3f3;
     color: #5e5e5e;
 }

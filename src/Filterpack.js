@@ -89,7 +89,7 @@ export default class Filterpack {
 
     reset() {
         if (this.enabled)
-            this.filterArray.forEach(filter => filter.setGain(0));
+            this.presets.custom = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     }
 
     getPreset(key) {
