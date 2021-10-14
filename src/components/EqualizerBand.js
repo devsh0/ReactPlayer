@@ -3,7 +3,7 @@ import {useEffect, useRef, useState} from "react";
 const MAX_GAIN = 12; // dB
 let g_previousDragY = 0;
 
-export default function EqualizerBand({filter, filterGain, onBandTuned, enabled}) {
+export default function EqualizerBand({filter, filterGain, onBandTuned, eqEnabled}) {
     const [dragging, setDragging] = useState(false);
     const [gain, setGain] = useState(filterGain);
     const boxRef = useRef();
@@ -40,7 +40,7 @@ export default function EqualizerBand({filter, filterGain, onBandTuned, enabled}
 
     // To have some way of tweaking the bands in mobile devices.
     const handleClickSlide = (event) => {
-        if (!enabled) return;
+        if (!eqEnabled) return;
         const previousY = knobRef.current.getBoundingClientRect().top;
         const newFillHeight = fillRef.current.clientHeight + (previousY - event.clientY);
         const newGain = fillHeightToGain(newFillHeight);
@@ -49,7 +49,7 @@ export default function EqualizerBand({filter, filterGain, onBandTuned, enabled}
     }
 
     const handleDragStart = (event) => {
-        if (!enabled) return;
+        if (!eqEnabled) return;
         g_previousDragY = event.clientY;
         setDragging(true);
     }
@@ -79,9 +79,9 @@ export default function EqualizerBand({filter, filterGain, onBandTuned, enabled}
              onMouseMove={handleMouseMove}
              onMouseLeave={handleDragEnd}
         >
-            <div ref={boxRef} className={`box ${enabled ? 'enabled' : 'disabled'}`} onMouseDown={handleClickSlide}>
-                <div ref={fillRef} className={`fill ${enabled ? 'enabled' : 'disabled'}`}>
-                    <div ref={knobRef} className={`knob ${enabled ? 'enabled' : 'disabled'}`}></div>
+            <div ref={boxRef} className={`box ${eqEnabled ? 'enabled' : 'disabled'}`} onMouseDown={handleClickSlide}>
+                <div ref={fillRef} className={`fill ${eqEnabled ? 'enabled' : 'disabled'}`}>
+                    <div ref={knobRef} className={`knob ${eqEnabled ? 'enabled' : 'disabled'}`}></div>
                 </div>
             </div>
             <h6>{filter.frequency} Hz</h6>

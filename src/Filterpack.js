@@ -11,7 +11,8 @@ class Filter {
         this.node.type = this.type;
         this.node.frequency.value = this.frequency;
         this.node.gain.value = this.gain;
-        this.node.q = (1 / 2) * this.frequency;
+        if (this.type === 'peaking')
+            this.node.q = (this.frequency < 2000 ? 3 : 5);
     }
 
     setGain(gain) {

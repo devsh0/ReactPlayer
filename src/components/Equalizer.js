@@ -11,6 +11,7 @@ export default function Equalizer({filterpack}) {
     const handlePresetChange = (key) => {
         key = key.toLowerCase();
         setLoadedPresetKey(key);
+        console.log(loadedPresetKey);
         setLoadedPreset(filterpack.getPreset(key));
     }
 
@@ -27,14 +28,13 @@ export default function Equalizer({filterpack}) {
     const handleEqReset = () => {
         filterpack.reset();
         handlePresetChange('custom');
-        setResetCount(resetCount + 1);
     }
 
     // Just to hack around the async behavior of state setters.
     // We are forcing multiple renders because otherwise title of the preset container won't change.
     useEffect(() => {
         setResetCount(resetCount + 1);
-    }, [resetCount])
+    }, [loadedPresetKey])
 
     const getBands = () => {
         let bands = [];
@@ -43,7 +43,7 @@ export default function Equalizer({filterpack}) {
                                       filter={filter}
                                       filterGain={loadedPreset[i]}
                                       onBandTuned={handleTuning}
-                                      enabled={eqEnabled}
+                                      eqEnabled={eqEnabled}
             />);
         });
         return bands;
@@ -53,7 +53,7 @@ export default function Equalizer({filterpack}) {
         <div className={'equalizer'}>
             <PresetContainer loadedPresetKey={loadedPresetKey}
                              onPresetChange={handlePresetChange}
-                             enabled={eqEnabled}
+                             eqEnabled={eqEnabled}
                              onEqToggle={handleEqToggle}
                              onEqReset={handleEqReset}
                              filterpack={filterpack}/>
