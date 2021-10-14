@@ -11,6 +11,7 @@ class Filter {
         this.node.type = this.type;
         this.node.frequency.value = this.frequency;
         this.node.gain.value = this.gain;
+        this.node.q = (1 / 2) * this.frequency;
     }
 
     setGain(gain) {
@@ -34,8 +35,17 @@ export default class Filterpack {
             .map(freq => new Filter(context, 'peaking', freq, 0));
         this.filterArray = [this.lowshelf, ...this.peakingFilterArray, this.highshelf];
         this.presets = {
-            custom : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            bass: [6, 5, 4, 3, 2, 1, 0, 0, 0, 0]
+            custom: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            bass: [4, 4, 4, 3, 2, 1, 0, 0, 0, 0],
+            'bass 2x': [6, 6, 4, 2, 0, 0, 0, 0, 0, 0],
+            ballad: [-8.4, -7.2, -5, -1.2, -0.8, 0.7, 1, 2.1, 3, 4.4],
+            classic: [-2, -2, -2.4, 0.2, 0.5, 1.5, 1.5, 0, 2.5, 9],
+            club: [0, 0, 8, 6, 5.5, 5, 3, 0, 0, 0],
+            dance: [9.6, 7.0, 2.5, 0, 0, -5.6, -7.0, -7.0, 0, 0],
+            party: [4.5, 1.7, 1, 0, 3.2, 4.5, 6.91, 8.8, 9.3, 10],
+            pop: [-1.6, 4.5, 7, 8, 5.6, 0, -2.5, -2, -1.6, -1.5],
+            rock: [8, 5, -5.5, -8, -3, 4, 8, 11, 11, 11.5],
+            techno: [8, 5.5, 0, -5.5, -5, 0, 8, 10, 10, 9]
         }
     }
 

@@ -4,12 +4,13 @@ import {useState} from "react";
 
 export default function Equalizer({filterpack}) {
     const [loadedPresetKey, setLoadedPresetKey] = useState('custom')
-    const [loadedPreset, setLoadedPreset] = useState(filterpack.getPreset(loadedPresetKey));
+    const [loadedPreset, setLoadedPreset] = useState(filterpack.getPreset('custom'));
 
     const handlePresetChange = (key) => {
         key = key.toLowerCase();
         setLoadedPresetKey(key);
-        setLoadedPreset(filterpack.getPreset(loadedPresetKey));
+        setLoadedPreset(filterpack.getPreset(key));
+        console.log(`${key}: ${loadedPreset}`);
     }
 
     const handleTuning = () => {
