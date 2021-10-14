@@ -34,6 +34,10 @@ export default function EqualizerBand({filter, filterGain}) {
         filter.setGain(gain);
     }, [gain])
 
+    useEffect(() => {
+        setGain(filterGain);
+    }, [filterGain])
+
     // To have some way of tweaking the bands in mobile devices.
     const handleClickSlide = (event) => {
         const previousY = knobRef.current.getBoundingClientRect().top;

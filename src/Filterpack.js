@@ -33,6 +33,10 @@ export default class Filterpack {
             .filter((f, i) => i > 0 && i < this.count - 1)
             .map(freq => new Filter(context, 'peaking', freq, 0));
         this.filterArray = [this.lowshelf, ...this.peakingFilterArray, this.highshelf];
+        this.presets = {
+            'custom' : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'bass': [6, 5, 4, 3, 2, 1, 0, 0, 0, 0]
+        }
     }
 
     connect(source, destination) {
@@ -46,21 +50,11 @@ export default class Filterpack {
             this.filterArray[filterIndex].setGain(gain);
     }
 
-    setGainAround(frequency, gain) {
-        if (frequency < 30) {
-            this.filterArray[0].setGain(gain);
-            return;
-        }
-        if (frequency > 16000) {
-            this.filterArray[this.count - 1].setGain(gain);
-            return;
-        }
-        for (let i = 1; i < this.count - 2; i++) {
-            const filter = this.filterArray[i];
-            if (frequency < filter.frequency) {
-                filter.setGain(gain);
-                return;
-            }
-        }
+    getPresets() {
+        return this.presets;
+    }
+
+    getPreset(key) {
+        return this.presets[key];
     }
 }
