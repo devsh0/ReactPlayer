@@ -22,11 +22,15 @@
     background: white;
 }
 
-.preset-container .drop-down {
+.preset-container .drop-down-container {
     display: flex;
     justify-content: center;
     width: 65%;
-    text-transform: uppercase;
+}
+
+.drop-down-container .btn {
+    width: 100%;
+    font-weight: bold;
 }
 
 .preset-tray {
