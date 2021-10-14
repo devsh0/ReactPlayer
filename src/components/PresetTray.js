@@ -1,10 +1,14 @@
 import {useEffect, useRef, useState} from "react";
 
-export default function PresetTray({filterpack, onPresetChange, loadedPresetKey}) {
+export default function PresetTray({filterpack, onPresetChange, loadedPresetKey, enabled}) {
     const [isDropped, setDropped] = useState(false);
     const selected = useRef();
 
-    const handleDropdownToggle = () => setDropped(!isDropped);
+    const handleDropdownToggle = () => {
+        if (!enabled)
+            return;
+        setDropped(!isDropped);
+    }
 
     const executeSelect = (presetKey, target) => {
         if (!target) {
@@ -32,6 +36,10 @@ export default function PresetTray({filterpack, onPresetChange, loadedPresetKey}
         executeSelect(loadedPresetKey);
     }, [loadedPresetKey])
 
+    useEffect(() => {
+        setDropped(isDropped && enabled);
+    }, [enabled])
+
     const getPresetItems = () => {
         const items = [];
         for (let key of Object.keys(filterpack.getPresets())) {
@@ -48,7 +56,7 @@ export default function PresetTray({filterpack, onPresetChange, loadedPresetKey}
 
     return (
         <div className={'drop-down-container'}>
-            <button className={'btn drop-down'} onClick={handleDropdownToggle}>
+            <button className={`btn drop-down ${enabled ? 'enabled' : 'disabled'}`} onClick={handleDropdownToggle}>
                 {selected.current ? selected.current.innerText : 'Custom'}
             </button>
             <div className={`preset-tray ${isDropped || 'hidden'}`}>

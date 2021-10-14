@@ -3,6 +3,7 @@
     border: 2px solid rgba(100, 100, 100, .1);;
     max-width: 400px;
     user-select: none;
+    position: relative;
 }
 
 .preset-container {
@@ -31,6 +32,11 @@
 .drop-down-container .btn {
     width: 100%;
     font-weight: bold;
+}
+
+.drop-down.disabled {
+    background: #f3f3f3;
+    color: #5e5e5e;
 }
 
 .preset-tray {
@@ -109,11 +115,20 @@
     box-shadow: 0 0 2px 1px rgba(93, 150, 150, .2);
 }
 
+.box.disabled {
+    background: #dfdfdf;
+    box-shadow: none;
+}
+
 .box .fill {
     position: relative;
     background: #5e5e5e;
     height: 50%;
     border-radius: 10px;
+}
+
+.fill.disabled {
+    background: rgba(0, 0, 0, .3);
 }
 
 .fill .knob {
@@ -125,6 +140,10 @@
     background: #ffffff;
     border-radius: 50%;
     outline: 2px solid rgba(100, 100, 100, .2);
+}
+
+.knob.disabled {
+    background: #f3f1f1;
 }
 
 .band-container h6 {

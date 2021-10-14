@@ -3,7 +3,7 @@ import {useEffect, useRef, useState} from "react";
 const MAX_GAIN = 12; // dB
 let g_previousDragY = 0;
 
-export default function EqualizerBand({filter, filterGain, onBandTuned}) {
+export default function EqualizerBand({filter, filterGain, onBandTuned, enabled}) {
     const [dragging, setDragging] = useState(false);
     const [gain, setGain] = useState(filterGain);
     const boxRef = useRef();
@@ -40,6 +40,7 @@ export default function EqualizerBand({filter, filterGain, onBandTuned}) {
 
     // To have some way of tweaking the bands in mobile devices.
     const handleClickSlide = (event) => {
+        if (!enabled) return;
         const previousY = knobRef.current.getBoundingClientRect().top;
         const newFillHeight = fillRef.current.clientHeight + (previousY - event.clientY);
         const newGain = fillHeightToGain(newFillHeight);
@@ -48,6 +49,7 @@ export default function EqualizerBand({filter, filterGain, onBandTuned}) {
     }
 
     const handleDragStart = (event) => {
+        if (!enabled) return;
         g_previousDragY = event.clientY;
         setDragging(true);
     }
@@ -77,9 +79,9 @@ export default function EqualizerBand({filter, filterGain, onBandTuned}) {
              onMouseMove={handleMouseMove}
              onMouseLeave={handleDragEnd}
         >
-            <div ref={boxRef} className={'box'} onMouseDown={handleClickSlide}>
-                <div ref={fillRef} className={'fill'}>
-                    <div ref={knobRef} className={'knob'}></div>
+            <div ref={boxRef} className={`box ${enabled ? 'enabled' : 'disabled'}`} onMouseDown={handleClickSlide}>
+                <div ref={fillRef} className={`fill ${enabled ? 'enabled' : 'disabled'}`}>
+                    <div ref={knobRef} className={`knob ${enabled ? 'enabled' : 'disabled'}`}></div>
                 </div>
             </div>
             <h6>{filter.frequency} Hz</h6>

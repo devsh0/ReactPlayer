@@ -26,6 +26,7 @@ class Filter {
 
 export default class Filterpack {
     constructor(context) {
+        this.enabled = true;
         this.count = 10;
         this.bands = [32, 64, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
         this.lowshelf = new Filter(context, 'lowshelf', this.bands[0], 0);
@@ -34,6 +35,7 @@ export default class Filterpack {
             .filter((f, i) => i > 0 && i < this.count - 1)
             .map(freq => new Filter(context, 'peaking', freq, 0));
         this.filterArray = [this.lowshelf, ...this.peakingFilterArray, this.highshelf];
+        this.gainsWhenDisabled = [];
         this.presets = {
             custom: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             bass: [4, 4, 4, 3, 2, 1, 0, 0, 0, 0],
@@ -62,6 +64,32 @@ export default class Filterpack {
 
     getPresets() {
         return this.presets;
+    }
+
+    enable() {
+        if (!this.enabled) {
+            this.gainsWhenDisabled.forEach((gain, i) => this.filterArray[i].setGain(gain));
+            this.enabled = true;
+        }
+    }
+
+    disable() {
+        if (this.enabled) {
+            this.gainsWhenDisabled = this.filterArray.map(filter => filter.gain);
+            this.filterArray.forEach(filter => filter.setGain(0));
+            this.enabled = false;
+        }
+    }
+
+    setEnabled(enabled) {
+        if (enabled)
+            this.enable();
+        else this.disable();
+    }
+
+    reset() {
+        if (this.enabled)
+            this.filterArray.forEach(filter => filter.setGain(0));
     }
 
     getPreset(key) {
