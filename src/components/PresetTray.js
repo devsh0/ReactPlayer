@@ -1,27 +1,50 @@
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
-export default function PresetTray({filterpack, onPresetChange}) {
+export default function PresetTray({filterpack, onPresetChange, loadedPresetKey}) {
     const [isDropped, setDropped] = useState(false);
     const selected = useRef();
 
     const handleDropdownToggle = () => setDropped(!isDropped);
 
-    const handlePresetChange = (event) => {
+    const executeSelect = (presetKey, target) => {
+        if (!target) {
+            const parent = selected.current.parentNode;
+            for (let child of parent.children)
+                if (child.innerText.toLowerCase() === presetKey) {
+                    target = child
+                    break;
+                }
+        }
+        if (!target) throw new Error('Preset key did not match any item!');
         selected.current.classList.remove('selected');
-        const target = event.target;
         target.classList.add('selected');
         selected.current = target;
         setDropped(false);
-        onPresetChange(target.innerText.toLowerCase());
+        onPresetChange(presetKey);
     }
 
-    const presetItems = Object.keys(filterpack.getPresets())
-        .map(key => key[0].toUpperCase() + key.slice(1))
-        .map((key, i) => {
-            return i === 0
-                ? <div ref={selected} key={key} className={`item selected`} onClick={handlePresetChange}>{key}</div>
-                : <div key={key} className={`item`} onClick={handlePresetChange}>{key}</div>
-        });
+    const handlePresetChange = (event) => {
+        const target = event.target;
+        executeSelect(target.innerText, event.target);
+    }
+
+    useEffect(() => {
+        executeSelect(loadedPresetKey);
+    }, [loadedPresetKey])
+
+    const getPresetItems = () => {
+        const items = [];
+        for (let key of Object.keys(filterpack.getPresets())) {
+            let item;
+            const title = key[0].toUpperCase() + key.slice(1);
+            if (key === loadedPresetKey)
+                item = <div ref={selected} key={key} className={`item selected`} onClick={handlePresetChange}>{title}</div>
+            else
+                item = <div key={key} className={`item`} onClick={handlePresetChange}>{title}</div>
+            items.push(item);
+        }
+        return items;
+    }
 
     return (
         <div className={'drop-down-container'}>
@@ -29,7 +52,7 @@ export default function PresetTray({filterpack, onPresetChange}) {
                 {selected.current ? selected.current.innerText : 'Custom'}
             </button>
             <div className={`preset-tray ${isDropped || 'hidden'}`}>
-                {presetItems}
+                {getPresetItems()}
             </div>
         </div>
     )

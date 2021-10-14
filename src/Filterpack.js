@@ -34,8 +34,8 @@ export default class Filterpack {
             .map(freq => new Filter(context, 'peaking', freq, 0));
         this.filterArray = [this.lowshelf, ...this.peakingFilterArray, this.highshelf];
         this.presets = {
-            'custom' : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            'bass': [6, 5, 4, 3, 2, 1, 0, 0, 0, 0]
+            custom : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            bass: [6, 5, 4, 3, 2, 1, 0, 0, 0, 0]
         }
     }
 
@@ -56,5 +56,10 @@ export default class Filterpack {
 
     getPreset(key) {
         return this.presets[key];
+    }
+
+    registerCustomPreset() {
+        this.presets.custom = this.filterArray.map(filter => filter.gain);
+        console.log(this.presets.custom);
     }
 }

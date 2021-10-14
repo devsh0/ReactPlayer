@@ -3,7 +3,7 @@ import {useEffect, useRef, useState} from "react";
 const MAX_GAIN = 12; // dB
 let g_previousDragY = 0;
 
-export default function EqualizerBand({filter, filterGain}) {
+export default function EqualizerBand({filter, filterGain, onBandTuned}) {
     const [dragging, setDragging] = useState(false);
     const [gain, setGain] = useState(filterGain);
     const boxRef = useRef();
@@ -44,6 +44,7 @@ export default function EqualizerBand({filter, filterGain}) {
         const newFillHeight = fillRef.current.clientHeight + (previousY - event.clientY);
         const newGain = fillHeightToGain(newFillHeight);
         setGain(newGain);
+        onBandTuned();
     }
 
     const handleDragStart = (event) => {
@@ -63,7 +64,10 @@ export default function EqualizerBand({filter, filterGain}) {
     }
 
     const handleDragEnd = () => {
-        setDragging(false);
+        if (dragging) {
+            setDragging(false);
+            onBandTuned();
+        }
     }
 
     return (
