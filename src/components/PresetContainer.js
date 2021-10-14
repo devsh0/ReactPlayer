@@ -1,10 +1,10 @@
 import PresetTray from "./PresetTray";
 
-export default function PresetContainer() {
+export default function PresetContainer({filterpack, onPresetChange}) {
     return (
         <div className={'preset-container'}>
-            <button className={'btn edge'}>Play</button>
-            <PresetTray />
-            <button className={'btn edge'}>Tweak</button>
+            <button className={'btn'}>Play</button>
+            <PresetTray onPresetChange={onPresetChange} filterpack={filterpack}/>
+            <button className={'btn'}>Tweak</button>
         </div>);
 }

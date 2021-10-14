@@ -1,61 +1,65 @@
-import {useRef} from "react";
+import {useEffect, useRef, useState} from "react";
 
-const MAX_GAIN = 24; // dB
+const MAX_GAIN = 12; // dB
+let g_previousDragY = 0;
 
-export default function EqualizerBand({filter}) {
+export default function EqualizerBand({filter, filterGain}) {
+    const [dragging, setDragging] = useState(false);
+    const [gain, setGain] = useState(filterGain);
     const boxRef = useRef();
     const fillRef = useRef();
     const knobRef = useRef();
 
-    const gainToFillHeight = (gain, boxHeight, knobHeightBias) => {
+    const gainToFillHeight = (gain) => {
+        const boxHeight = boxRef.current.clientHeight;
+        const knobHeightBias = knobRef.current.clientHeight / 2;
         const step = (boxHeight - knobHeightBias) / (MAX_GAIN * 2);
         return (gain + MAX_GAIN) * step;
     }
 
-    const fillHeightToGain = (fillHeight, boxHeight, knobHeightBias) => {
+    const fillHeightToGain = (fillHeight) => {
+        const boxHeight = boxRef.current.clientHeight;
+        const knobHeightBias = knobRef.current.clientHeight / 2;
         const step = (boxHeight - knobHeightBias) / (MAX_GAIN * 2);
         return (fillHeight / step) - MAX_GAIN;
     }
 
-    const applyLevel = (displacement) => {
+    useEffect(() => {
         const boxHeight = boxRef.current.clientHeight;
         const knobHeightBias = knobRef.current.clientHeight / 2;
         const heightBound = boxHeight - knobHeightBias;
-        const fillHeight = fillRef.current.clientHeight;
+        const fillHeight = gainToFillHeight(gain);
         fillRef.current.style.maxHeight = heightBound + 'px';
-        fillRef.current.style.height = (fillHeight + displacement) + 'px';
-
-        const gain = fillHeightToGain(fillHeight, boxHeight, knobHeightBias);
-        console.log(gain);
+        fillRef.current.style.height = fillHeight + 'px';
         filter.setGain(gain);
-    }
+    }, [gain])
 
     // To have some way of tweaking the bands in mobile devices.
     const handleClickSlide = (event) => {
-        const fillRect = fillRef.current.getBoundingClientRect();
-        const displacement = fillRect.top - event.clientY;
-        applyLevel(displacement);
+        const previousY = knobRef.current.getBoundingClientRect().top;
+        const newFillHeight = fillRef.current.clientHeight + (previousY - event.clientY);
+        const newGain = fillHeightToGain(newFillHeight);
+        setGain(newGain);
     }
-
-    let dragging = false;
-    let previousClientY = 0;
 
     const handleDragStart = (event) => {
-        previousClientY = event.clientY;
-        dragging = true;
-    }
-
-    const handleDragEnd = () => {
-        dragging = false;
+        g_previousDragY = event.clientY;
+        setDragging(true);
     }
 
     const handleMouseMove = (event) => {
         if (dragging) {
             const clientY = event.clientY;
-            const displacement = previousClientY - clientY;
-            previousClientY = clientY;
-            applyLevel(displacement);
+            const displacement = g_previousDragY - clientY;
+            const newFillHeight = fillRef.current.clientHeight + displacement;
+            const newGain = fillHeightToGain(newFillHeight);
+            setGain(newGain);
+            g_previousDragY = clientY;
         }
+    }
+
+    const handleDragEnd = () => {
+        setDragging(false);
     }
 
     return (
