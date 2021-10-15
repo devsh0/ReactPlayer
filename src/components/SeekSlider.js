@@ -10,7 +10,7 @@ export default function SeekSlider({controllerState, onSeek}) {
             return;
         }
 
-        const newWidth = (inputRef.current.clientWidth / (controllerState.duration / controllerState.position)) + 1
+        const newWidth = (inputRef.current.clientWidth / (controllerState.duration / controllerState.position)) + 1;
         overlay.current.style.width = newWidth + 'px';
     }, [controllerState.position])
 

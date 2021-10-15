@@ -3,39 +3,51 @@ import Controller from "./components/Controller";
 import './index.css';
 import Filterpack from "./Filterpack";
 import Equalizer from "./components/Equalizer";
+import Visualizer from "./components/Visualizer";
 
 const audioContext = new AudioContext();
+const analyser = audioContext.createAnalyser();
 const filterpack = new Filterpack(audioContext);
-let audioElement = null;
+let stream = null;
 
 export default function Player() {
-    const [observer, setAudioContext] = useState(false);
+    const [frequencyData, setFrequencyData] = useState();
 
-    useEffect(() => {
-        if (audioElement)
-            configureAudioContext(audioElement);
-    });
-
-    function configureAudioContext(audioElement) {
-        const stream = audioContext.createMediaStreamSource(audioElement.captureStream());
-        filterpack.connect(stream, audioContext.destination);
+    function getFrequencySamples(analyser) {
+        analyser.fftSize = 512;
+        analyser.smoothingTimeConstant = 1;
+        const freqPoints = analyser.frequencyBinCount;
+        const data = new Uint8Array(freqPoints);
+        analyser.getByteFrequencyData(data);
+        return data;
     }
 
-    function handleStreamMutation(audioEl) {
-        audioElement = audioEl;
-        // How else would I invoke a re-render?
-        setAudioContext({observer: !observer});
+    function handleAudioLoaded(audioElement) {
+        stream = audioContext.createMediaStreamSource(audioElement.captureStream());
+        const inputNode = stream.connect(analyser);
+        filterpack.connect(inputNode, audioContext.destination);
+    }
+
+    function handleAudioEnded() {
+        stream.disconnect();
+        analyser.disconnect();
+        filterpack.disconnect();
     }
 
     function handleResume() {
         audioContext.resume().catch(error => console.log(error));
     }
 
+    function handleDrawRequest() {
+        const samples = getFrequencySamples(analyser);
+        setFrequencyData(samples);
+    }
+
     return (
         <div className={'player'}>
-            <div className={'waveform'}></div>
-            <Controller onStreamMutated={handleStreamMutation} onResume={handleResume}/>
-            {/*<Equalizer filterpack={filterpack}/>*/}
+            <Visualizer frequencySamples={frequencyData} onDrawRequested={handleDrawRequest}/>
+            <Controller onAudioLoaded={handleAudioLoaded} onAudioEnded={handleAudioEnded} onResume={handleResume}/>
+            <Equalizer filterpack={filterpack}/>
         </div>
     );
 }

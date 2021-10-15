@@ -9,7 +9,7 @@ const initialControllerState = {
 };
 
 
-export default function Controller({onStreamMutated, onResume}) {
+export default function Controller({onAudioLoaded, onAudioEnded, onResume}) {
     const audioElementRef = useRef();
     const [controllerState, setControllerState] = useState(initialControllerState);
 
@@ -19,7 +19,7 @@ export default function Controller({onStreamMutated, onResume}) {
         state.duration = audioElementRef.current.duration;
         audioElementRef.current.volume = .001;
         setControllerState(state);
-        onStreamMutated(audioElementRef.current);
+        onAudioLoaded(audioElementRef.current);
     }
 
     // Mutates the stream captured in `Player#audioContext`.
@@ -28,11 +28,11 @@ export default function Controller({onStreamMutated, onResume}) {
         const state = {...controllerState};
         state.position = newPosition;
         setControllerState(state);
-        onStreamMutated(audioElementRef.current);
     }
 
     const handleAudioEnded = () => {
         setControllerState(initialControllerState);
+        onAudioEnded();
     }
 
     const handlePlayPause = () => {

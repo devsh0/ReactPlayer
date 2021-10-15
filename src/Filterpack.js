@@ -56,6 +56,12 @@ export default class Filterpack {
         node.connect(this.highshelf.node).connect(destination);
     }
 
+    disconnect() {
+        this.lowshelf.node.disconnect();
+        this.peakingFilterArray.forEach(peaking => peaking.node.disconnect());
+        this.highshelf.node.disconnect();
+    }
+
     setGain(filterIndex, gain) {
         if (filterIndex >= 0 && filterIndex < this.count)
             this.filterArray[filterIndex].setGain(gain);
