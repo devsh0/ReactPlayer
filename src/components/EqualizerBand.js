@@ -35,6 +35,7 @@ export default function EqualizerBand({filter, filterGain, onBandTuned, eqEnable
     }, [gain])
 
     useEffect(() => {
+        fillRef.current.classList.add('smooth-transition');
         setGain(filterGain);
     }, [filterGain])
 
@@ -50,6 +51,7 @@ export default function EqualizerBand({filter, filterGain, onBandTuned, eqEnable
 
     const handleDragStart = (event) => {
         if (!eqEnabled) return;
+        fillRef.current.classList.remove('smooth-transition');
         g_previousDragY = event.clientY;
         setDragging(true);
     }

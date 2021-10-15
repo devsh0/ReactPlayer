@@ -211,6 +211,10 @@
     border-radius: 10px;
 }
 
+.fill.smooth-transition {
+    transition: all ease-in-out .3s;
+}
+
 .fill.disabled {
     background: rgba(0, 0, 0, .3);
 }
