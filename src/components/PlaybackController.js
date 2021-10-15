@@ -1,4 +1,4 @@
-import {BiShuffle, IoRepeat, MdLoop, MdSkipNext, MdSkipPrevious, RiRepeatFill} from "react-icons/all";
+import {BiShuffle, MdSkipNext, MdSkipPrevious, RiRepeatFill} from "react-icons/all";
 import {BsPauseFill, BsPlayFill} from "react-icons/bs";
 import React from "react";
 

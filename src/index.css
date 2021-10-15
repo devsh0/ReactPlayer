@@ -314,3 +314,49 @@
 .ctrl-btn.loop {
     font-size: 16px;
 }
+
+/* Seek Slider */
+.seek-slider-container {
+    display: flex;
+    justify-content: center;
+    width: 400px;
+    margin: 20px 0;
+    position: relative;
+}
+
+input.progress {
+    width: 100%;
+    position: relative;
+    cursor: pointer;
+    -webkit-appearance: none;
+}
+
+input.progress::-webkit-slider-runnable-track {
+    -webkit-appearance: none;
+    height: 4px;
+    background: #b9b3b3;
+}
+
+input.progress::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    cursor: pointer;
+    bottom: 1px;
+    border-radius: 50%;
+    width: 13px;
+    height: 13px;
+    background: #333333;
+    margin: -4px 0;
+    z-index: 10;
+}
+
+.seek-slider-container .played-segment {
+    position: absolute;
+    display: inline;
+    width: 1px;
+    height: 4px;
+    background: #000;
+    left: 1px;
+    top: 2px;
+    z-index: 4;
+    pointer-events: none;
+}
