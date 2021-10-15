@@ -54,7 +54,7 @@ export default function Controller({onStreamMutated, onResume}) {
 
     return (
         <div id={'audio-controls-container'}>
-            <audio ref={audioElementRef} src={'./kda.mp3'} onEnded={handleAudioEnded} onCanPlay={handleAudioLoaded} onTimeUpdate={handlePlaybackProgress}/>
+            <audio ref={audioElementRef} src={'./biology.mp3'} onEnded={handleAudioEnded} onCanPlay={handleAudioLoaded} onTimeUpdate={handlePlaybackProgress}/>
             <SeekSlider controllerState={controllerState} onSeek={handleSeek} audioElement={audioElementRef.current}/>
             <button onClick={handlePlayPause}>{controllerState.playing ? 'Pause' : 'Play'}</button>
         </div>

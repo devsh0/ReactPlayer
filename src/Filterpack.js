@@ -12,7 +12,7 @@ class Filter {
         this.node.frequency.value = this.frequency;
         this.node.gain.value = this.gain;
         if (this.type === 'peaking')
-            this.node.q = (this.frequency < 2000 ? 3 : 5);
+            this.node.q = (this.frequency <= 2000 ? 3 : 5);
     }
 
     setGain(gain) {
@@ -45,7 +45,8 @@ export default class Filterpack {
             dance: [3.2, 6.2, 5.8, 0, 2.6, 4.4, 5.7, 3.5, 3.2, 0],
             party: [4.5, 1.7, 1, 0, 0, 2.5, 4, 5, 5, 6],
             pop: [-2, -1.8, 0, 1.2, 4.2, 4.2, 1.2, 0, -1.8, -2],
-            rock: [5, 3, 2, 1.8, -1.8, -2, 8, 0, 2, 4.8],
+            rock: [5, 3, 2, 1.8, -1.8, -2, 0, 1.6, 3, 3.8],
+            jazz: [4.5, 2.9, 1.5, 1.8, -1.5, -1.5, 0, 1.6, 2.8, 3.8]
         }
     }
 
