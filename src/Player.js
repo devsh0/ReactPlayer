@@ -32,9 +32,10 @@ export default function Player() {
     }
 
     return (
-        <div>
+        <div className={'player'}>
+            <div className={'waveform'}></div>
             <Controller onStreamMutated={handleStreamMutation} onResume={handleResume}/>
-            <Equalizer filterpack={filterpack}/>
+            {/*<Equalizer filterpack={filterpack}/>*/}
         </div>
     );
 }
