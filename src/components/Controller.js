@@ -1,11 +1,13 @@
 import React, {useRef, useState} from "react";
 import SeekSlider from "./SeekSlider";
+import PlaybackController from "./PlaybackController";
 
 const initialControllerState = {
     duration: 0,
     position: 0,
     playing: false
 };
+
 
 export default function Controller({onStreamMutated, onResume}) {
     const audioElementRef = useRef();
@@ -56,7 +58,7 @@ export default function Controller({onStreamMutated, onResume}) {
         <div id={'audio-controls-container'}>
             <audio ref={audioElementRef} src={'./biology.mp3'} onEnded={handleAudioEnded} onCanPlay={handleAudioLoaded} onTimeUpdate={handlePlaybackProgress}/>
             <SeekSlider controllerState={controllerState} onSeek={handleSeek} audioElement={audioElementRef.current}/>
-            <button onClick={handlePlayPause}>{controllerState.playing ? 'Pause' : 'Play'}</button>
+            <PlaybackController onPlayPause={handlePlayPause} controllerState={controllerState} />
         </div>
     )
 }

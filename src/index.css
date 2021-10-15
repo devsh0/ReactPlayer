@@ -1,3 +1,4 @@
+/* Equalizer */
 .equalizer {
     background: #f3f3f3;
     border: 2px solid rgba(100, 100, 100, .1);;
@@ -241,4 +242,75 @@
     font-size: 10px;
     text-align: center;
     padding: 10px;
+}
+
+/* Player Controls */
+.playback-controller {
+    display: flex;
+    background: #f3f3f3;
+    align-items: center;
+    justify-content: space-between;
+    width: 400px;
+    height: 50px;
+    border: 2px solid rgba(100, 100, 100, .1);
+}
+
+.playback-controller .section {
+    padding:  0;
+}
+.playback-controller .start {
+    display: flex;
+    width: 20%;
+}
+
+.playback-controller .center {
+    display: flex;
+    justify-content: center;
+    width: 50%;
+}
+
+.playback-controller .end {
+    display: flex;
+    justify-content: flex-end;
+    width: 20%;
+}
+
+.ctrl-btn {
+    cursor: pointer;
+}
+
+.section.center .ctrl-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 35px;
+    height: 35px;
+    background: #fff;
+    border-radius: 50%;
+    font-size: 23px;
+    border: 0;
+    margin: 0 4px;
+    box-shadow: 0 0 4px rgba(100, 100, 100, .4);
+}
+
+.section.start,
+.section.end {
+    padding: 0 10px;
+}
+
+.ctrl-btn.shuffle,
+.ctrl-btn.loop {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    border: none;
+}
+
+.ctrl-btn.shuffle {
+    font-size: 18px;
+}
+
+.ctrl-btn.loop {
+    font-size: 16px;
 }
