@@ -127,6 +127,21 @@
     box-shadow: 0 0 2px 1px rgba(93, 150, 150, .2);
 }
 
+.scale-axis-container {
+    display: flex;
+    align-items: flex-start;
+    width: 10px;
+    height: 100%;
+    background: #333;
+}
+
+.scale-axis-container .main-line {
+    height: 80%;
+    width: 10px;
+    background: white;
+    margin-top: 14px;
+}
+
 .box.disabled {
     background: #dfdfdf;
     box-shadow: none;
