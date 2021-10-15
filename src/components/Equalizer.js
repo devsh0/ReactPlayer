@@ -1,6 +1,7 @@
 import EqualizerBand from "./EqualizerBand";
 import PresetContainer from "./PresetContainer";
 import {useEffect, useState} from "react";
+import ScaleAxis from "./ScaleAxis";
 
 export default function Equalizer({filterpack}) {
     const [loadedPresetKey, setLoadedPresetKey] = useState('custom')
@@ -58,6 +59,7 @@ export default function Equalizer({filterpack}) {
                              onEqReset={handleEqReset}
                              filterpack={filterpack}/>
             <div className={'band-array-container'}>
+                <ScaleAxis />
                 {getBands()}
             </div>
         </div>
