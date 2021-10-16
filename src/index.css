@@ -8,17 +8,51 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
+    font-family: sans-serif;
     height: 100%;
+    background: #333;
 }
 
-/* Equalizer */
-.equalizer {
+/* Player */
+.player {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     background: #f3f3f3;
-    border: 2px solid rgba(100, 100, 100, .1);;
-    max-width: 400px;
+    width: 450px;
+    height: 380px;
+    padding: 2px;
+    border-radius: 5px;
+}
+
+.audio-controls-container {
+    height: 18.6%;
+    background: #f3f3f3;
+    margin-top: 2px;
+}
+
+/* Equalizer and Visualizer*/
+.component {
+    display: none;
+    height: 100%;
+    background: #f3f3f3;
     user-select: none;
     position: relative;
     font-family: sans-serif;
+    border-radius: 5px;
+}
+
+.component.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.visualizer canvas {
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
 }
 
 .preset-container {
@@ -26,7 +60,8 @@ html, body {
     justify-content: center;
     align-items: center;
     position: relative;
-    height: 30px;
+    width: 100%;
+    height: 10%;
 }
 
 .preset-container .btn {
@@ -74,9 +109,9 @@ html, body {
     height: 200px;
     background: #ffffff;
     border-radius: 2px;
-    box-shadow: 0 2px 2px 1px rgba(0, 0, 0, .1);
     z-index: 10;
     overflow-y: scroll;
+    color: black;
 }
 
 .preset-tray .item {
@@ -87,7 +122,6 @@ html, body {
     text-align: center;
     font-size: 14px;
     font-family: sans-serif;
-    box-shadow: 0 0 2px 1px rgba(51, 51, 51, .2);
     cursor: pointer;
 }
 
@@ -98,7 +132,6 @@ html, body {
 .preset-tray .selected {
     font-weight: bold;
     background: rgba(57, 86, 238, 0.7);
-    color: white;
 }
 
 .preset-tray::-webkit-scrollbar {
@@ -119,7 +152,7 @@ html, body {
     justify-content: center;
     align-items: center;
     margin: 10px 0;
-    height: 300px;
+    height: 90%;
 }
 
 .band-container,
@@ -136,12 +169,11 @@ html, body {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    background: #fff;
+    background: #cfcfd1;
     height: 90%;
     max-height: 90%;
     width: 8px;
     border-radius: 10px;
-    box-shadow: 0 0 2px 1px rgba(93, 150, 150, .2);
     z-index: 2;
 }
 
@@ -199,7 +231,6 @@ html, body {
 }
 
 .row span {
-    background: #f3f3f3;
     font-size: 10px;
     position: absolute;
     left: -30px;
@@ -220,7 +251,7 @@ html, body {
 
 .box .fill {
     position: relative;
-    background: #5e5e5e;
+    background: #061978ad;
     height: 50%;
     border-radius: 10px;
 }
@@ -241,7 +272,7 @@ html, body {
     height: 13px;
     background: #ffffff;
     border-radius: 50%;
-    outline: 2px solid rgba(100, 100, 100, .2);
+    outline: 2px solid #475494;
 }
 
 .knob.disabled {
@@ -344,8 +375,8 @@ input.progress {
 
 input.progress::-webkit-slider-runnable-track {
     -webkit-appearance: none;
-    height: 4px;
-    background: #b9b3b3;
+    height: 5px;
+    background: #808080;
 }
 
 input.progress::-webkit-slider-thumb {
@@ -355,7 +386,7 @@ input.progress::-webkit-slider-thumb {
     border-radius: 50%;
     width: 13px;
     height: 13px;
-    background: #333333;
+    background: #1e1d1d;
     margin: -4px 0;
     z-index: 20;
 }
@@ -364,39 +395,9 @@ input.progress::-webkit-slider-thumb {
     position: absolute;
     display: inline;
     width: 1px;
-    height: 4px;
-    background: #333333;
+    height: 5px;
+    background: #1e1d1d;
     left: 1px;
     z-index: 1;
     pointer-events: none;
-}
-
-/* Player */
-.player {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 480px;
-    height: 380px;
-    background: #f3f3f3;
-    box-shadow: 0 0 4px rgba(0, 0, 0, .3);
-}
-
-.audio-controls-container {
-    height: 18.6%;
-    background: #f3f3f3;
-}
-
-/* Visualizer */
-.viz-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 80%;
-    border-radius: 4px;
-}
-
-.viz-container canvas {
-    width: 100%;
-    height: 100%;
 }

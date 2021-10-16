@@ -37,10 +37,9 @@ export default function Player() {
 
     return (
         <div className={'player'}>
+            <Equalizer filterpack={filterpack}/>
             <Visualizer analyser={analyser} playing={!paused}/>
-            <Controller onAudioLoaded={handleAudioLoaded} onAudioEnded={handleAudioEnded} onPause={handlePause}
-                        onResume={handleResume}/>
-            {/*<Equalizer filterpack={filterpack}/>*/}
+            <Controller onAudioLoaded={handleAudioLoaded} onAudioEnded={handleAudioEnded} onPause={handlePause} onResume={handleResume}/>
         </div>
     );
 }

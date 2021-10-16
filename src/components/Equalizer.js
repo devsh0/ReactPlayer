@@ -51,7 +51,7 @@ export default function Equalizer({filterpack}) {
     }
 
     return (
-        <div className={'equalizer'}>
+        <div className={'component equalizer'}>
             <PresetContainer loadedPresetKey={loadedPresetKey}
                              onPresetChange={handlePresetChange}
                              eqEnabled={eqEnabled}

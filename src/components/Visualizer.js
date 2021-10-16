@@ -19,7 +19,11 @@ export default function Visualizer({playing, analyser}) {
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
         const width = canvas.clientWidth, height = canvas.clientHeight;
-        context.fillStyle = '#14182c';
+        const radialGradient = context.createRadialGradient(0, 0, 10, width - 300, height - 300, 300);
+        radialGradient.addColorStop(0, '#333');
+        radialGradient.addColorStop(.5, '#484646');
+        radialGradient.addColorStop(.8, 'black')
+        context.fillStyle = radialGradient;
         if (!canvasFilledRef.current) {
             context.fillRect(0, 0, width, height);
             canvasFilledRef.current = true;
@@ -27,8 +31,8 @@ export default function Visualizer({playing, analyser}) {
 
         function draw() {
             if (playingRef.current) {
-                context.clearRect(0, 0, width, height);
-                context.fillStyle = '#14182c';
+                context.clearRect(0, 0, width, height)
+                context.fillStyle = radialGradient;
                 context.fillRect(0, 0, width, height);
                 const frequencySamples = getFrequencySamples(analyser);
                 const bufferLength = frequencySamples.length;
@@ -37,13 +41,15 @@ export default function Visualizer({playing, analyser}) {
                 let x = 0;
 
                 for(let i = 0; i < bufferLength; i++) {
-                    barHeight = frequencySamples[i] * 1.5;
-                    const gradient = context.createLinearGradient(x + (barWidth / 2), (height - (barHeight / 5)),  x + (barWidth / 2), 0);
-                    gradient.addColorStop(.4, '#262c4b');
-                    gradient.addColorStop(.6, '#3978b6');
-                    gradient.addColorStop(.8, '#7894d9');
-                    context.fillStyle = gradient;
-                    context.fillRect(x, (height - (barHeight / 2) - 80), barWidth, barHeight);
+                    barHeight = .7 * frequencySamples[i];
+                    const linearGradient = context.createLinearGradient(x + (barWidth / 2), (height - (barHeight / 5)),  x + (barWidth / 2), 0);
+                    linearGradient.addColorStop(.4, '#25254d');
+                    linearGradient.addColorStop(.6, '#333d7a');
+                    linearGradient.addColorStop(.8, '#83878f');
+                    context.fillStyle = linearGradient;
+                    const baseline = height / 2;
+                    const verticalOffset = baseline - (barHeight / 2);
+                    context.fillRect(x, verticalOffset, barWidth, barHeight / 2);
                     x += barWidth + (1.4);
                 }
                 requestAnimationFrame(draw);
@@ -54,7 +60,7 @@ export default function Visualizer({playing, analyser}) {
     }, [playing]);
 
     return (
-        <div className={'viz-container'}>
+        <div className={'component visualizer active'}>
             <canvas ref={canvasRef}> </canvas>
         </div>
     );
