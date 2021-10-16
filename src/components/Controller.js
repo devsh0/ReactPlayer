@@ -9,7 +9,7 @@ const initialControllerState = {
 };
 
 
-export default function Controller({onAudioLoaded, onAudioEnded, onResume}) {
+export default function Controller({onAudioLoaded, onAudioEnded, onPause, onResume}) {
     const audioElementRef = useRef();
     const [controllerState, setControllerState] = useState(initialControllerState);
 
@@ -38,6 +38,7 @@ export default function Controller({onAudioLoaded, onAudioEnded, onResume}) {
     const handlePlayPause = () => {
         if (controllerState.playing) {
             audioElementRef.current.pause();
+            onPause();
         }
         else {
             audioElementRef.current.play();
@@ -55,8 +56,8 @@ export default function Controller({onAudioLoaded, onAudioEnded, onResume}) {
     }
 
     return (
-        <div id={'audio-controls-container'}>
-            <audio ref={audioElementRef} src={'./biology.mp3'} onEnded={handleAudioEnded} onCanPlay={handleAudioLoaded} onTimeUpdate={handlePlaybackProgress}/>
+        <div className={'audio-controls-container'}>
+            <audio ref={audioElementRef} src={'./thrills.mp3'} onEnded={handleAudioEnded} onCanPlay={handleAudioLoaded} onTimeUpdate={handlePlaybackProgress}/>
             <SeekSlider controllerState={controllerState} onSeek={handleSeek} audioElement={audioElementRef.current}/>
             <PlaybackController onPlayPause={handlePlayPause} controllerState={controllerState} />
         </div>
