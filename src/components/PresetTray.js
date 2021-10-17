@@ -1,6 +1,8 @@
 import {useEffect, useRef, useState} from "react";
 
-export default function PresetTray({filterpack, onPresetChange, loadedPresetKey, eqEnabled}) {
+export default function PresetTray({filterpack, onPresetChange}) {
+    const loadedPresetKey = filterpack.getCurrentPreset().key;
+    const eqEnabled = filterpack.isEnabled();
     const [isDropped, setDropped] = useState(false);
     const selected = useRef();
 
@@ -37,7 +39,7 @@ export default function PresetTray({filterpack, onPresetChange, loadedPresetKey,
     }, [loadedPresetKey])
 
     useEffect(() => {
-        setDropped(isDropped && eqEnabled);
+        setDropped(isDropped && filterpack.isEnabled());
     }, [eqEnabled])
 
     const getPresetItems = () => {

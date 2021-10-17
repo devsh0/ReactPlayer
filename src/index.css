@@ -33,20 +33,16 @@ html, body {
 
 /* Equalizer and Visualizer*/
 .component {
-    display: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     height: 100%;
     background: #f3f3f3;
     user-select: none;
     position: relative;
     font-family: sans-serif;
     margin: 2px;
-}
-
-.component.active {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
 }
 
 .visualizer {
@@ -190,7 +186,7 @@ html, body {
     flex-direction: column;
     align-items: center;
     margin: 8px 2px;
-    height: 90%;
+    height: 100%;
     width: 30px;
 }
 
@@ -306,6 +302,7 @@ html, body {
 
 .knob.disabled {
     background: #f3f1f1;
+    outline: 2px solid #9a9a9d;
 }
 
 .band-container h6 {

@@ -41,7 +41,7 @@ export default function Player() {
 
     return (
         <div className={'player'}>
-            {eqActive ? <Equalizer filterpack={filterpack} isActive={eqActive}/> : <Visualizer analyser={analyser} playing={!paused} isActive={!eqActive}/>}
+            {eqActive ? <Equalizer filterpack={filterpack}/> : <Visualizer analyser={analyser} playing={!paused}/>}
             <Controller onAudioLoaded={handleAudioLoaded} onAudioEnded={handleAudioEnded} onPause={handlePause} onResume={handleResume}/>
             <button onClick={handleViewSwitch}>Activate EQ</button>
         </div>

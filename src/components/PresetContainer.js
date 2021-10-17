@@ -1,24 +1,20 @@
 import PresetTray from "./PresetTray";
 
-export default function PresetContainer({filterpack, onPresetChange, loadedPresetKey, onEqToggle, onEqReset, eqEnabled}) {
+export default function PresetContainer({filterpack, onPresetChange, onEqToggle, onEqReset}) {
 
     const handleEqToggle = () => {
         onEqToggle();
     }
 
     const handleEqReset = () => {
-        if (eqEnabled)
+        if (filterpack.isEnabled())
             onEqReset();
     }
 
     return (
         <div className={'preset-container'}>
-            <button className={`btn ${eqEnabled ? 'enabled' : 'disabled'}`} onClick={handleEqReset}>Reset</button>
-            <PresetTray
-                loadedPresetKey={loadedPresetKey}
-                onPresetChange={onPresetChange}
-                eqEnabled={eqEnabled}
-                filterpack={filterpack}/>
-            <button className={'btn'} onClick={handleEqToggle}>{eqEnabled ? 'Disable' : 'Enable'}</button>
+            <button className={`btn ${filterpack.isEnabled() ? 'enabled' : 'disabled'}`} onClick={handleEqReset}>Reset</button>
+            <PresetTray onPresetChange={onPresetChange} filterpack={filterpack}/>
+            <button className={'btn'} onClick={handleEqToggle}>{filterpack.isEnabled() ? 'Disable' : 'Enable'}</button>
         </div>);
 }

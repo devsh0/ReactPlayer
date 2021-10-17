@@ -1,23 +1,25 @@
 import EqualizerBand from "./EqualizerBand";
 import PresetContainer from "./PresetContainer";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import ScaleAxis from "./ScaleAxis";
 
-export default function Equalizer({filterpack, isActive}) {
-    const [loadedPresetKey, setLoadedPresetKey] = useState('custom')
-    const [loadedPreset, setLoadedPreset] = useState(filterpack.getPreset('custom'));
-    const [eqEnabled, setEqEnabled] = useState(filterpack.enabled);
-    const [resetCount, setResetCount] = useState(0);
+export default function Equalizer({filterpack}) {
+    const [currentPreset, setCurrentPreset] = useState(filterpack.getCurrentPreset());
+    const [eqEnabled, setEqEnabled] = useState(filterpack.isEnabled());
 
     const handlePresetChange = (key) => {
-        key = key.toLowerCase();
-        setLoadedPresetKey(key);
-        setLoadedPreset(filterpack.getPreset(key));
+        if (filterpack.isEnabled()) {
+            key = key.toLowerCase();
+            filterpack.setCurrentPreset(key);
+            setCurrentPreset(filterpack.getCurrentPreset());
+        }
     }
 
     const handleTuning = () => {
-        filterpack.registerCustomPreset();
-        handlePresetChange('custom');
+        if (filterpack.isEnabled()) {
+            filterpack.registerCustomPreset();
+            handlePresetChange('custom');
+        }
     }
 
     const handleEqToggle = () => {
@@ -26,37 +28,24 @@ export default function Equalizer({filterpack, isActive}) {
     }
 
     const handleEqReset = () => {
-        filterpack.reset();
-        handlePresetChange('custom');
+        if (filterpack.isEnabled()) {
+            filterpack.reset();
+            handlePresetChange('custom');
+        }
     }
-
-    // Just to hack around the async behavior of state setters.
-    // We are forcing multiple renders because otherwise title of the preset container won't change.
-    useEffect(() => {
-        setResetCount(resetCount + 1);
-    }, [loadedPresetKey])
 
     const getBands = () => {
         let bands = [];
         filterpack.filterArray.forEach((filter, i) => {
-            bands.push(<EqualizerBand key={filter.frequency}
-                                      filter={filter}
-                                      filterGain={loadedPreset[i]}
-                                      onBandTuned={handleTuning}
-                                      eqEnabled={eqEnabled}
-            />);
+            bands.push(<EqualizerBand key={filter.frequency} filter={filter} filterGain={currentPreset.value[i]}
+                                      onBandTuned={handleTuning} eqEnabled={eqEnabled} />);
         });
         return bands;
     }
 
     return (
-        <div className={'component equalizer ' + (isActive ? 'active' : '')}>
-            <PresetContainer loadedPresetKey={loadedPresetKey}
-                             onPresetChange={handlePresetChange}
-                             eqEnabled={eqEnabled}
-                             onEqToggle={handleEqToggle}
-                             onEqReset={handleEqReset}
-                             filterpack={filterpack}/>
+        <div className={'component equalizer'}>
+            <PresetContainer filterpack={filterpack} onPresetChange={handlePresetChange} onEqToggle={handleEqToggle} onEqReset={handleEqReset}/>
             <div className={'band-array-container'}>
                 <ScaleAxis />
                 {getBands()}
