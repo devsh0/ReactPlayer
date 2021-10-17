@@ -3,7 +3,7 @@ import PresetContainer from "./PresetContainer";
 import {useEffect, useState} from "react";
 import ScaleAxis from "./ScaleAxis";
 
-export default function Equalizer({filterpack}) {
+export default function Equalizer({filterpack, isActive}) {
     const [loadedPresetKey, setLoadedPresetKey] = useState('custom')
     const [loadedPreset, setLoadedPreset] = useState(filterpack.getPreset('custom'));
     const [eqEnabled, setEqEnabled] = useState(filterpack.enabled);
@@ -12,7 +12,6 @@ export default function Equalizer({filterpack}) {
     const handlePresetChange = (key) => {
         key = key.toLowerCase();
         setLoadedPresetKey(key);
-        console.log(loadedPresetKey);
         setLoadedPreset(filterpack.getPreset(key));
     }
 
@@ -51,7 +50,7 @@ export default function Equalizer({filterpack}) {
     }
 
     return (
-        <div className={'component equalizer'}>
+        <div className={'component equalizer ' + (isActive ? 'active' : '')}>
             <PresetContainer loadedPresetKey={loadedPresetKey}
                              onPresetChange={handlePresetChange}
                              eqEnabled={eqEnabled}

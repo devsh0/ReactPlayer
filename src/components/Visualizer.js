@@ -1,6 +1,6 @@
 import React, {useEffect, useRef} from "react";
 
-export default function Visualizer({playing, analyser}) {
+export default function Visualizer({playing, analyser, isActive}) {
     const canvasFilledRef = useRef(false);
     const canvasRef = useRef();
     const playingRef = useRef();
@@ -57,7 +57,7 @@ export default function Visualizer({playing, analyser}) {
     }, [playing]);
 
     return (
-        <div className={'component visualizer active'}>
+        <div className={'component visualizer ' + (isActive ? 'active' : '')}>
             <div className={'overlay'}></div>
             <canvas ref={canvasRef} width={200} height={200}>No canvas support</canvas>
             <div className={'center-background'}></div>

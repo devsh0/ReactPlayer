@@ -9,6 +9,7 @@ export default function EqualizerBand({filter, filterGain, onBandTuned, eqEnable
     const boxRef = useRef();
     const fillRef = useRef();
     const knobRef = useRef();
+    console.log('renderereeerered');
 
     const gainToFillHeight = (gain) => {
         const boxHeight = boxRef.current.clientHeight;
@@ -30,6 +31,7 @@ export default function EqualizerBand({filter, filterGain, onBandTuned, eqEnable
         const heightBound = boxHeight - knobHeightBias;
         const fillHeight = gainToFillHeight(gain);
         fillRef.current.style.maxHeight = heightBound + 'px';
+        console.log(`fillHeight: ${fillHeight}`);
         fillRef.current.style.height = fillHeight + 'px';
         filter.setGain(gain);
     }, [gain])
