@@ -57,7 +57,7 @@ export default function Controller({onAudioLoaded, onAudioEnded, onPause, onResu
 
     return (
         <div className={'audio-controls-container'}>
-            <audio ref={audioElementRef} src={'./thrills.mp3'} onEnded={handleAudioEnded} onCanPlay={handleAudioLoaded} onTimeUpdate={handlePlaybackProgress}/>
+            <audio ref={audioElementRef} src={'./biology.mp3'} onEnded={handleAudioEnded} onCanPlay={handleAudioLoaded} onTimeUpdate={handlePlaybackProgress}/>
             <SeekSlider controllerState={controllerState} onSeek={handleSeek} audioElement={audioElementRef.current}/>
             <PlaybackController onPlayPause={handlePlayPause} controllerState={controllerState} />
         </div>

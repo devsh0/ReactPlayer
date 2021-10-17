@@ -7,7 +7,7 @@ export default function Visualizer({playing, analyser}) {
     playingRef.current = playing;
 
     function getFrequencySamples(analyser) {
-        analyser.fftSize = 256;
+        analyser.fftSize = 1024;
         analyser.smoothingTimeConstant = .8;
         const freqPoints = analyser.frequencyBinCount;
         const data = new Uint8Array(freqPoints);
@@ -18,39 +18,36 @@ export default function Visualizer({playing, analyser}) {
     useEffect(() => {
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
-        const width = canvas.clientWidth, height = canvas.clientHeight;
-        const radialGradient = context.createRadialGradient(0, 0, 10, width - 300, height - 300, 300);
-        radialGradient.addColorStop(0, '#333');
-        radialGradient.addColorStop(.5, '#484646');
-        radialGradient.addColorStop(.8, 'black')
-        context.fillStyle = radialGradient;
-        if (!canvasFilledRef.current) {
-            context.fillRect(0, 0, width, height);
-            canvasFilledRef.current = true;
+        const width = canvas.clientWidth;
+        const height = canvas.clientHeight;
+        const origin = {x: width / 2, y: height / 2};
+
+        function clamp(input, min, max) {
+            if (input < min)
+                return min;
+            if (input > max)
+                return max;
+            return input;
         }
 
         function draw() {
             if (playingRef.current) {
-                context.clearRect(0, 0, width, height)
-                context.fillStyle = radialGradient;
-                context.fillRect(0, 0, width, height);
                 const frequencySamples = getFrequencySamples(analyser);
+                context.clearRect(0, 0, width, height)
                 const bufferLength = frequencySamples.length;
-                const barWidth = (width / bufferLength);
-                let barHeight = 0;
-                let x = 0;
-
-                for(let i = 0; i < bufferLength; i++) {
-                    barHeight = .7 * frequencySamples[i];
-                    const linearGradient = context.createLinearGradient(x + (barWidth / 2), (height - (barHeight / 5)),  x + (barWidth / 2), 0);
-                    linearGradient.addColorStop(.4, '#25254d');
-                    linearGradient.addColorStop(.6, '#333d7a');
-                    linearGradient.addColorStop(.8, '#83878f');
-                    context.fillStyle = linearGradient;
-                    const baseline = height / 2;
-                    const verticalOffset = baseline - (barHeight / 2);
-                    context.fillRect(x, verticalOffset, barWidth, barHeight / 2);
-                    x += barWidth + (1.4);
+                const radialStep = (2 * Math.PI / 140);
+                const weight = .5;
+                for (let i = 0; i < bufferLength; i++) {
+                    const magnitude = frequencySamples[i];
+                    const length = clamp(magnitude * weight, 10, 200);
+                    const xCoordinate = length * Math.cos(radialStep * i);
+                    const yCoordinate = length * Math.sin(radialStep * i);
+                    context.beginPath();
+                    context.moveTo(origin.x, origin.y);
+                    context.lineTo(origin.x + xCoordinate, origin.y + yCoordinate);
+                    context.strokeStyle = `rgb(255, 233, 240)`;
+                    context.lineWidth = 2;
+                    context.stroke();
                 }
                 requestAnimationFrame(draw);
             }
@@ -61,7 +58,9 @@ export default function Visualizer({playing, analyser}) {
 
     return (
         <div className={'component visualizer active'}>
-            <canvas ref={canvasRef}> </canvas>
+            <div className={'overlay'}></div>
+            <canvas ref={canvasRef} width={200} height={200}>No canvas support</canvas>
+            <div className={'center-background'}></div>
         </div>
     );
 }

@@ -39,7 +39,7 @@ html, body {
     user-select: none;
     position: relative;
     font-family: sans-serif;
-    border-radius: 5px;
+    margin: 2px;
 }
 
 .component.active {
@@ -49,10 +49,39 @@ html, body {
     align-items: center;
 }
 
-.visualizer canvas {
+.visualizer {
+    background: url("./images/viz-bg.webp");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+}
+
+.visualizer .overlay {
+    border: 1px solid black;
+    position: absolute;
+    backdrop-filter: blur(2px);
     width: 100%;
     height: 100%;
-    border-radius: 5px;
+    box-shadow: inset 0 0 100px 100px rgba(0, 0, 0, .8);
+}
+
+.visualizer canvas {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    z-index: 10;
+}
+
+.visualizer .center-background {
+    position: absolute;
+    background: url("images/note-music.jpg") center;
+    background-size: 170px;
+    width: 110px;
+    height: 110px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    z-index: 10;
 }
 
 .preset-container {
@@ -369,7 +398,7 @@ input.progress {
     width: 100%;
     position: relative;
     cursor: pointer;
-    margin: 0 2px;
+    margin: 0;
     -webkit-appearance: none;
 }
 
