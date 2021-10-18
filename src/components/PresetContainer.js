@@ -1,20 +1,26 @@
 import PresetTray from "./PresetTray";
+import {useContext} from "react";
+import PlayerContext from "./PlayerContext";
 
-export default function PresetContainer({filterpack, onPresetChange, onEqToggle, onEqReset}) {
+export default function PresetContainer({onPresetChanged, onEqToggleRequested, onEqResetRequested}) {
+    const playerContext = useContext(PlayerContext);
+    const eqEnabled = playerContext.equalizer.isEnabled;
 
     const handleEqToggle = () => {
-        onEqToggle();
+        onEqToggleRequested();
     }
 
     const handleEqReset = () => {
-        if (filterpack.isEnabled())
-            onEqReset();
+        if (eqEnabled) {
+            console.log('Eq reset requested');
+            onEqResetRequested();
+        }
     }
 
     return (
         <div className={'preset-container'}>
-            <button className={`btn ${filterpack.isEnabled() ? 'enabled' : 'disabled'}`} onClick={handleEqReset}>Reset</button>
-            <PresetTray onPresetChange={onPresetChange} filterpack={filterpack}/>
-            <button className={'btn'} onClick={handleEqToggle}>{filterpack.isEnabled() ? 'Disable' : 'Enable'}</button>
+            <button className={`btn ${eqEnabled ? 'enabled' : 'disabled'}`} onClick={handleEqReset}>Reset</button>
+            <PresetTray onPresetChanged={onPresetChanged}/>
+            <button className={'btn'} onClick={handleEqToggle}>{eqEnabled ? 'Disable' : 'Enable'}</button>
         </div>);
 }

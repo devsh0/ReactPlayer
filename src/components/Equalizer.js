@@ -1,51 +1,26 @@
 import EqualizerBand from "./EqualizerBand";
 import PresetContainer from "./PresetContainer";
-import {useState} from "react";
 import ScaleAxis from "./ScaleAxis";
+import {useContext} from "react";
+import PlayerContext from "./PlayerContext";
 
-export default function Equalizer({filterpack}) {
-    const [currentPreset, setCurrentPreset] = useState(filterpack.getCurrentPreset());
-    const [eqEnabled, setEqEnabled] = useState(filterpack.isEnabled());
-
-    const handlePresetChange = (key) => {
-        if (filterpack.isEnabled()) {
-            key = key.toLowerCase();
-            filterpack.setCurrentPreset(key);
-            setCurrentPreset(filterpack.getCurrentPreset());
-        }
-    }
-
-    const handleTuning = () => {
-        if (filterpack.isEnabled()) {
-            filterpack.registerCustomPreset();
-            handlePresetChange('custom');
-        }
-    }
-
-    const handleEqToggle = () => {
-        filterpack.setEnabled(!eqEnabled);
-        setEqEnabled(!eqEnabled);
-    }
-
-    const handleEqReset = () => {
-        if (filterpack.isEnabled()) {
-            filterpack.reset();
-            handlePresetChange('custom');
-        }
-    }
+export default function Equalizer({onPresetChanged, onFilterTuned, onEqToggleRequested, onEqResetRequested}) {
+    const playerContext = useContext(PlayerContext);
 
     const getBands = () => {
         let bands = [];
-        filterpack.filterArray.forEach((filter, i) => {
-            bands.push(<EqualizerBand key={filter.frequency} filter={filter} filterGain={currentPreset.value[i]}
-                                      onBandTuned={handleTuning} eqEnabled={eqEnabled} />);
+        playerContext.filterpackNode.getFilters().forEach((filter, i) => {
+            bands.push(<EqualizerBand key={filter.getFrequency()} index={i} onBandTuned={onFilterTuned} />);
         });
         return bands;
     }
 
     return (
         <div className={'component equalizer'}>
-            <PresetContainer filterpack={filterpack} onPresetChange={handlePresetChange} onEqToggle={handleEqToggle} onEqReset={handleEqReset}/>
+            <PresetContainer onPresetChanged={onPresetChanged}
+                onEqToggleRequested={onEqToggleRequested}
+                onEqResetRequested={onEqResetRequested}/>
+
             <div className={'band-array-container'}>
                 <ScaleAxis />
                 {getBands()}

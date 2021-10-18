@@ -1,8 +1,10 @@
-import {useEffect, useRef, useState} from "react";
+import {useContext, useEffect, useRef, useState} from "react";
+import PlayerContext from "./PlayerContext";
 
-export default function PresetTray({filterpack, onPresetChange}) {
-    const loadedPresetKey = filterpack.getCurrentPreset().key;
-    const eqEnabled = filterpack.isEnabled();
+export default function PresetTray({onPresetChanged}) {
+    const playerContext = useContext(PlayerContext);
+    const equalizer = playerContext.equalizer;
+    const eqEnabled = equalizer.isEnabled;
     const [isDropped, setDropped] = useState(false);
     const selected = useRef();
 
@@ -26,7 +28,7 @@ export default function PresetTray({filterpack, onPresetChange}) {
         target.classList.add('selected');
         selected.current = target;
         setDropped(false);
-        onPresetChange(presetKey);
+        onPresetChanged(presetKey);
     }
 
     const handlePresetChange = (event) => {
@@ -35,19 +37,20 @@ export default function PresetTray({filterpack, onPresetChange}) {
     }
 
     useEffect(() => {
-        executeSelect(loadedPresetKey);
-    }, [loadedPresetKey])
+        executeSelect(equalizer.currentPreset.key);
+    }, [playerContext.equalizer.currentPreset.key])
 
     useEffect(() => {
-        setDropped(isDropped && filterpack.isEnabled());
+        setDropped(isDropped && equalizer.isEnabled);
     }, [eqEnabled])
 
     const getPresetItems = () => {
         const items = [];
-        for (let key of Object.keys(filterpack.getPresets())) {
+        for (let preset of playerContext.filterpackNode.getPresets()) {
+            const key = preset.key;
             let item;
             const title = key[0].toUpperCase() + key.slice(1);
-            if (key === loadedPresetKey)
+            if (key === equalizer.currentPreset.key)
                 item = <div ref={selected} key={key} className={`item selected`} onClick={handlePresetChange}>{title}</div>
             else
                 item = <div key={key} className={`item`} onClick={handlePresetChange}>{title}</div>

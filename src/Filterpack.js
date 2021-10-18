@@ -16,6 +16,10 @@ class Filter {
             this.node.q = (this.frequency <= 2000 ? 3 : 5);
     }
 
+    getFrequency() {
+        return this.frequency;
+    }
+
     setGain(gain) {
         if (this.enabled) {
             this.gain = gain;
@@ -37,17 +41,17 @@ class Filter {
 }
 
 const getPresets = () => {
-    return {
-        custom: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        bass: [5.8, 4.5, 4, 2.9, .5, 0, 0, 0, 0, 0],
-        'bass 2x': [6, 6, 5, 3, 1, 0, 0, 0, 0, 0],
-        classic: [5.2, 3.1, 3, 2.9, -1.5, -1.5, 0, 2.9, 3.1, 3.3],
-        dance: [3.2, 6.2, 5.8, 0, 2.6, 4.4, 5.7, 3.5, 3.2, 0],
-        party: [4.5, 1.7, 1, 0, 0, 2.5, 4, 5, 5, 6],
-        pop: [-2, -1.8, 0, 1.2, 4.2, 4.2, 1.2, 0, -1.8, -2],
-        rock: [5, 3, 2, 1.8, -1.8, -2, 0, 1.6, 3, 3.8],
-        jazz: [4.5, 2.9, 1.5, 1.8, -1.5, -1.5, 0, 1.6, 2.8, 3.8]
-    }
+    return [
+        {key: 'custom', gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]},
+        {key: 'bass', gains: [5.8, 4.5, 4, 2.9, .5, 0, 0, 0, 0, 0]},
+        {key: 'bass 2x', gains: [6, 6, 5, 3, 1, 0, 0, 0, 0, 0]},
+        {key: 'classic', gains: [5.2, 3.1, 3, 2.9, -1.5, -1.5, 0, 2.9, 3.1, 3.3]},
+        {key: 'dance', gains: [3.2, 6.2, 5.8, 0, 2.6, 4.4, 5.7, 3.5, 3.2, 0]},
+        {key: 'party', gains: [4.5, 1.7, 1, 0, 0, 2.5, 4, 5, 5, 6]},
+        {key: 'pop', gains: [-2, -1.8, 0, 1.2, 4.2, 4.2, 1.2, 0, -1.8, -2]},
+        {key: 'rock', gains: [5, 3, 2, 1.8, -1.8, -2, 0, 1.6, 3, 3.8]},
+        {key: 'jazz', gains: [4.5, 2.9, 1.5, 1.8, -1.5, -1.5, 0, 1.6, 2.8, 3.8]}
+    ]
 }
 
 export default class Filterpack {
@@ -62,7 +66,7 @@ export default class Filterpack {
         this.filterArray = [this.lowshelf, ...this.peakingFilterArray, this.highshelf];
 
         this.presets = getPresets();
-        this.currentPreset = {key: 'custom', value: this.presets.custom};
+        this.currentPreset = this.presets[0];
         this.gainsWhenDisabled = [];
     }
 
@@ -76,6 +80,14 @@ export default class Filterpack {
         this.lowshelf.node.disconnect();
         this.peakingFilterArray.forEach(peaking => peaking.node.disconnect());
         this.highshelf.node.disconnect();
+    }
+
+    getFilters() {
+        return this.filterArray;
+    }
+
+    getFilter(index) {
+        return this.filterArray[index];
     }
 
     setGain(filterIndex, gain) {
@@ -118,12 +130,15 @@ export default class Filterpack {
     }
 
     reset() {
-        if (this.enabled)
-            this.presets.custom = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        if (this.enabled) {
+            const custom = this.getPreset('custom');
+            custom.gains = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        }
     }
 
     getPreset(key) {
-        return this.presets[key];
+        key = key.toLowerCase();
+        return this.presets.filter(preset => preset.key === key)[0];
     }
 
     getCurrentPreset() {
@@ -132,13 +147,16 @@ export default class Filterpack {
 
     setCurrentPreset(key) {
         if (this.enabled) {
-            this.currentPreset = {key: key, value: this.presets[key]};
+            const preset = this.getPreset(key);
+            this.filterArray.forEach((filter, i) => filter.setGain(preset.gains[i]));
+            this.currentPreset = preset;
         }
     }
 
-    registerCustomPreset() {
+    commitCustomPreset() {
         if (this.enabled) {
-            this.presets.custom = this.filterArray.map(filter => filter.gain);
+            const custom = this.getPreset('custom');
+            custom.gains = this.filterArray.map(filter => filter.gain);
         }
     }
 

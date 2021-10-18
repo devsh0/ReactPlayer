@@ -1,9 +1,11 @@
-import React, {useEffect, useRef} from "react";
+import React, {useContext, useEffect, useRef} from "react";
+import PlayerContext from "./PlayerContext";
 
-export default function Visualizer({playing, analyser}) {
+export default function Visualizer() {
+    const playerContext = useContext(PlayerContext);
     const canvasRef = useRef();
     const playingRef = useRef();
-    playingRef.current = playing;
+    playingRef.current = playerContext.isPlaying;
 
     function getFrequencySamples(analyser) {
         analyser.fftSize = 1024;
@@ -31,7 +33,7 @@ export default function Visualizer({playing, analyser}) {
 
         function draw() {
             if (playingRef.current) {
-                const frequencySamples = getFrequencySamples(analyser);
+                const frequencySamples = getFrequencySamples(playerContext.analyserNode);
                 context.clearRect(0, 0, width, height)
                 const bufferLength = frequencySamples.length;
                 const radialStep = (2 * Math.PI / 140);
@@ -53,7 +55,7 @@ export default function Visualizer({playing, analyser}) {
         }
 
         draw();
-    }, [playing]);
+    }, [playerContext.isPlaying]);
 
     return (
         <div className={'component visualizer'}>
