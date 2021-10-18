@@ -12,21 +12,21 @@ export default function EqualizerBand({filter, filterGain, onBandTuned, eqEnable
 
     const gainToFillHeight = (gain) => {
         const boxHeight = boxRef.current.clientHeight;
-        const knobHeightBias = knobRef.current.clientHeight / 3;
+        const knobHeightBias = knobRef.current.clientHeight / 2;
         const step = (boxHeight - knobHeightBias) / (MAX_GAIN * 2);
         return (gain + MAX_GAIN) * step;
     }
 
     const fillHeightToGain = (fillHeight) => {
         const boxHeight = boxRef.current.clientHeight;
-        const knobHeightBias = knobRef.current.clientHeight / 3;
+        const knobHeightBias = knobRef.current.clientHeight / 2;
         const step = (boxHeight - knobHeightBias) / (MAX_GAIN * 2);
         return (fillHeight / step) - MAX_GAIN;
     }
 
     useEffect(() => {
         const boxHeight = boxRef.current.clientHeight;
-        const knobHeightBias = knobRef.current.clientHeight / 3;
+        const knobHeightBias = knobRef.current.clientHeight / 2;
         const heightBound = boxHeight - knobHeightBias;
         const fillHeight = gainToFillHeight(gain);
         fillRef.current.style.maxHeight = heightBound + 'px';
