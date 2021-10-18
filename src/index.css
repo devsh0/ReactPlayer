@@ -277,7 +277,7 @@ html, body {
 
 .box .fill {
     position: relative;
-    background: #061978ad;
+    background: rgba(30, 30, 30, .9);
     height: 50%;
     border-radius: 10px;
 }
@@ -298,7 +298,7 @@ html, body {
     height: 13px;
     background: #ffffff;
     border-radius: 50%;
-    outline: 2px solid #475494;
+    outline: 2px solid rgba(30, 30, 30, .9);
 }
 
 .knob.disabled {
@@ -345,7 +345,17 @@ html, body {
 }
 
 .ctrl-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    border: none;
     cursor: pointer;
+    font-size: 16px;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 2px;
+    transition: all ease-in-out 150ms;
 }
 
 .section.center .ctrl-btn {
@@ -354,12 +364,20 @@ html, body {
     align-items: center;
     width: 35px;
     height: 35px;
-    background: #fff;
+    background: rgba(0, 0, 0, .9);
+    color: #f3f3f3;
     border-radius: 50%;
     font-size: 23px;
     border: 0;
-    margin: 0 4px;
-    box-shadow: 0 0 4px rgba(100, 100, 100, .4);
+    margin: 4px;
+}
+
+.ctrl-btn:hover,
+.ctrl-btn.tapped,
+.ctrl-btn:hover {
+    background: rgba(0, 0, 0, .9) !important;
+    box-shadow: 0 0 2px black;
+    color: white;
 }
 
 .section.start,
@@ -367,21 +385,8 @@ html, body {
     padding: 0 10px;
 }
 
-.ctrl-btn.shuffle,
-.ctrl-btn.loop {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: transparent;
-    border: none;
-}
-
 .ctrl-btn.shuffle {
     font-size: 18px;
-}
-
-.ctrl-btn.loop {
-    font-size: 16px;
 }
 
 /* Seek Slider */

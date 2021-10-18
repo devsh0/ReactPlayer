@@ -44,7 +44,7 @@ export default function Visualizer({playing, analyser}) {
                     context.beginPath();
                     context.moveTo(origin.x, origin.y);
                     context.lineTo(origin.x + xCoordinate, origin.y + yCoordinate);
-                    context.strokeStyle = `rgb(255, 233, 240)`;
+                    context.strokeStyle = `rgb(248, 243, 245)`;
                     context.lineWidth = 2;
                     context.stroke();
                 }

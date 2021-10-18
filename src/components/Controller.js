@@ -1,15 +1,16 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import SeekSlider from "./SeekSlider";
 import PlaybackController from "./PlaybackController";
 
 const initialControllerState = {
     duration: 0,
     position: 0,
-    playing: false
+    playing: false,
+    isEqView: false,
 };
 
 
-export default function Controller({onAudioLoaded, onAudioEnded, onPause, onResume}) {
+export default function Controller({onAudioLoaded, onAudioEnded, onPause, onResume, onViewSwitch}) {
     const audioElementRef = useRef();
     const [controllerState, setControllerState] = useState(initialControllerState);
 
@@ -55,11 +56,15 @@ export default function Controller({onAudioLoaded, onAudioEnded, onPause, onResu
         setControllerState(state);
     }
 
+    const handleViewSwitch = () => {
+        controllerState.isEqView = !controllerState.isEqView;
+        onViewSwitch();
+    }
     return (
         <div className={'audio-controls-container'}>
             <audio ref={audioElementRef} src={'./biology.mp3'} onEnded={handleAudioEnded} onCanPlay={handleAudioLoaded} onTimeUpdate={handlePlaybackProgress}/>
             <SeekSlider controllerState={controllerState} onSeek={handleSeek} audioElement={audioElementRef.current}/>
-            <PlaybackController onPlayPause={handlePlayPause} controllerState={controllerState} />
+            <PlaybackController onPlayPause={handlePlayPause} controllerState={controllerState} onViewSwitch={handleViewSwitch}/>
         </div>
     )
 }
