@@ -11,11 +11,11 @@ export default function PlaybackController({onPlayPause, onViewSwitched}) {
     return (
         <div className={'playback-controller'}>
             <div className={'section start'}>
-                <button className={'ctrl-btn shuffle'}><BiShuffle /></button>
-                <button className={'ctrl-btn playlist'}><RiPlayList2Fill /> </button>
+                <button className={'ctrl-btn shuffle'}><BiShuffle/></button>
+                <button className={'ctrl-btn playlist'}><RiPlayList2Fill/></button>
             </div>
             <div className={'section center'}>
-                <button className={'ctrl-btn'}><MdSkipPrevious /></button>
+                <button className={'ctrl-btn'}><MdSkipPrevious/></button>
                 <button className={'ctrl-btn'} onClick={onPlayPause}>
                     {playerContext.isPlaying ? <BsPauseFill/> : <BsPlayFill/>}
                 </button>
@@ -23,8 +23,8 @@ export default function PlaybackController({onPlayPause, onViewSwitched}) {
             </div>
             <div className={'section end'}>
                 <button className={'ctrl-btn eq ' + (isEqView ? 'tapped' : '')}
-                        onClick={_ => onViewSwitched(PlayerView.Equalizer)}><ImEqualizer2 /></button>
-                <button className={'ctrl-btn loop'}><RiRepeatFill /></button>
+                        onClick={_ => onViewSwitched(PlayerView.Equalizer)}><ImEqualizer2/></button>
+                <button className={'ctrl-btn loop'}><RiRepeatFill/></button>
             </div>
         </div>
     );

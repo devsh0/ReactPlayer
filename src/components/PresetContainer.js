@@ -11,10 +11,8 @@ export default function PresetContainer({onPresetChanged, onEqToggleRequested, o
     }
 
     const handleEqReset = () => {
-        if (eqEnabled) {
-            console.log('Eq reset requested');
+        if (eqEnabled)
             onEqResetRequested();
-        }
     }
 
     return (

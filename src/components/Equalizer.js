@@ -10,7 +10,7 @@ export default function Equalizer({onPresetChanged, onFilterTuned, onEqToggleReq
     const getBands = () => {
         let bands = [];
         playerContext.filterpackNode.getFilters().forEach((filter, i) => {
-            bands.push(<EqualizerBand key={filter.getFrequency()} index={i} onBandTuned={onFilterTuned} />);
+            bands.push(<EqualizerBand key={filter.getFrequency()} index={i} onBandTuned={onFilterTuned}/>);
         });
         return bands;
     }
@@ -18,11 +18,11 @@ export default function Equalizer({onPresetChanged, onFilterTuned, onEqToggleReq
     return (
         <div className={'component equalizer'}>
             <PresetContainer onPresetChanged={onPresetChanged}
-                onEqToggleRequested={onEqToggleRequested}
-                onEqResetRequested={onEqResetRequested}/>
+                             onEqToggleRequested={onEqToggleRequested}
+                             onEqResetRequested={onEqResetRequested}/>
 
             <div className={'band-array-container'}>
-                <ScaleAxis />
+                <ScaleAxis/>
                 {getBands()}
             </div>
         </div>

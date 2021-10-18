@@ -4,6 +4,7 @@ html, body {
     padding: 0;
     margin: 0;
 }
+
 #root {
     display: flex;
     justify-content: center;
@@ -46,9 +47,7 @@ html, body {
 }
 
 .visualizer {
-    background: url("./images/viz-bg.webp");
-    background-position: center;
-    background-repeat: no-repeat;
+    background: url("./images/viz-bg.webp") no-repeat center;
     background-size: cover;
     position: relative;
 }
@@ -59,7 +58,6 @@ html, body {
     backdrop-filter: blur(2px);
     width: 100%;
     height: 100%;
-    box-shadow: inset 0 0 100px 100px rgba(0, 0, 0, .8);
 }
 
 .visualizer canvas {
@@ -325,8 +323,9 @@ html, body {
 }
 
 .playback-controller .section {
-    padding:  0;
+    padding: 0;
 }
+
 .playback-controller .start {
     display: flex;
     width: 20%;

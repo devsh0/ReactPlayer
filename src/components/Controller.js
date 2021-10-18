@@ -37,7 +37,7 @@ export default function Controller(props) {
             <audio ref={elementRef} src={'./biology.mp3'}
                    onEnded={props.onAudioUnloaded}
                    onCanPlay={handleAudioLoaded}
-                   onTimeUpdate={handlePlaybackProgress} />
+                   onTimeUpdate={handlePlaybackProgress}/>
 
             <SeekSlider onSeek={handleSeek} audioElement={elementRef.current}/>
             <PlaybackController onPlayPause={handlePlayPause} onViewSwitched={props.onViewSwitched}/>

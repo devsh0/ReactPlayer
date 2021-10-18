@@ -51,7 +51,8 @@ export default function PresetTray({onPresetChanged}) {
             let item;
             const title = key[0].toUpperCase() + key.slice(1);
             if (key === equalizer.currentPreset.key)
-                item = <div ref={selected} key={key} className={`item selected`} onClick={handlePresetChange}>{title}</div>
+                item =
+                    <div ref={selected} key={key} className={`item selected`} onClick={handlePresetChange}>{title}</div>
             else
                 item = <div key={key} className={`item`} onClick={handlePresetChange}>{title}</div>
             items.push(item);
