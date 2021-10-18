@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useState} from 'react';
 import Controller from "./components/Controller";
 import Filterpack from "./Filterpack";
 import Visualizer from "./components/Visualizer";
