@@ -4,7 +4,7 @@ import ScaleAxis from "./ScaleAxis";
 import {useContext} from "react";
 import PlayerContext from "./PlayerContext";
 
-export default function Equalizer({onPresetChanged, onFilterTuned, onEqToggleRequested, onEqResetRequested}) {
+export default function EqualizerView({onPresetChanged, onFilterTuned, onEqToggleRequested, onEqResetRequested}) {
     const playerContext = useContext(PlayerContext);
 
     const getBands = () => {
@@ -17,6 +17,7 @@ export default function Equalizer({onPresetChanged, onFilterTuned, onEqToggleReq
 
     return (
         <div className={'component equalizer'}>
+            <div className={'overlay'}></div>
             <PresetContainer onPresetChanged={onPresetChanged}
                              onEqToggleRequested={onEqToggleRequested}
                              onEqResetRequested={onEqResetRequested}/>

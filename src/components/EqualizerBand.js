@@ -87,7 +87,7 @@ export default function EqualizerBand({index, onBandTuned}) {
                     <div ref={knobRef} className={`knob ${eqEnabled ? 'enabled' : 'disabled'}`}></div>
                 </div>
             </div>
-            <h6>{playerContext.filterpackNode.getFilter(index).getFrequency()} Hz</h6>
+            <span>{playerContext.filterpackNode.getFilter(index).getFrequency()} Hz</span>
         </div>
     );
 }
