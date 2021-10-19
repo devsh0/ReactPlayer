@@ -393,14 +393,24 @@ html, body {
     justify-content: center;
     width: 100%;
     position: relative;
+    margin: -2px 2px 0 2px;
 }
 
 input.progress {
-    width: 100%;
+    width: 92%;
     position: relative;
     cursor: pointer;
     margin: 0;
     -webkit-appearance: none;
+}
+
+.timer {
+    width: 8%;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 0;
+    margin: 0 2px;
+    text-align: end;
 }
 
 input.progress::-webkit-slider-runnable-track {
@@ -426,8 +436,9 @@ input.progress::-webkit-slider-thumb {
     display: inline;
     width: 1px;
     height: 5px;
+    top: 3px;
     background: #1e1d1d;
-    left: 1px;
+    left: 0;
     z-index: 1;
     pointer-events: none;
 }

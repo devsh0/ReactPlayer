@@ -15,6 +15,14 @@ export default function SeekSlider({onSeek}) {
         overlay.current.style.width = newWidth + 'px';
     }, [playerContext.currentTime])
 
+    function getFormattedTime(time) {
+        const minutes = Math.floor(time / 60);
+        const seconds = Math.floor(time % 60);
+        const minuteString = minutes < 10 ? `0${minutes}` : minutes + '';
+        const secondString = seconds < 10 ? `0${seconds}` : seconds + '';
+        return `${minuteString}:${secondString}`;
+    }
+
     return (
         <div className={'seek-slider-container'}>
             <div ref={overlay} className={'played-segment'}></div>
@@ -22,6 +30,7 @@ export default function SeekSlider({onSeek}) {
                    type='range' max={playerContext.audioDuration} step='1'
                    value={playerContext.currentTime}
                    onChange={event => onSeek(event.target.value)}/>
+            <span className={'timer'}>{getFormattedTime(playerContext.currentTime)}</span>
         </div>
     );
 }
