@@ -122,16 +122,22 @@ export default function Player() {
         handlePresetChanged('custom');
     }
 
-    const eqActive = playerState.currentView === PlayerView.Equalizer;
+    function getView() {
+        switch (playerState.currentView) {
+            case PlayerView.Equalizer:
+                return (<Equalizer onPresetChanged={handlePresetChanged}
+                                   onFilterTuned={handleFilterTuned}
+                                   onEqToggleRequested={handleEqToggleRequested}
+                                   onEqResetRequested={handleEqResetRequested}/>);
+            default:
+                return <Visualizer/>
+        }
+    }
+
     return (
         <PlayerContext.Provider value={playerState}>
             <div className={'player'}>
-                {eqActive ? <Equalizer onPresetChanged={handlePresetChanged}
-                                       onFilterTuned={handleFilterTuned}
-                                       onEqToggleRequested={handleEqToggleRequested}
-                                       onEqResetRequested={handleEqResetRequested}/>
-                    : <Visualizer/>}
-
+                {getView()}
                 <Controller onAudioLoaded={handleAudioLoaded}
                             onAudioUnloaded={handleAudioUnloaded}
                             onAudioPaused={handleAudioPaused}

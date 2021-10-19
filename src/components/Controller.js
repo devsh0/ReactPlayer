@@ -8,7 +8,6 @@ import {PlayerView} from "./PlayerView";
 export default function Controller(props) {
     const playerContext = useContext(PlayerContext);
     const elementRef = useRef();
-    const eqViewRef = useRef(false);
 
     const handleAudioLoaded = () => {
         props.onAudioLoaded(elementRef.current);
@@ -33,12 +32,6 @@ export default function Controller(props) {
         props.onAudioSeeked(event.target.currentTime);
     }
 
-    // Fixme: this should be removed when playlist is added.
-    const handleViewSwitched = () => {
-        props.onViewSwitched(eqViewRef.current ? PlayerView.Visualizer : PlayerView.Equalizer);
-        eqViewRef.current = !eqViewRef.current;
-    }
-
     return (
         <div className={'audio-controls-container'}>
 
@@ -48,7 +41,7 @@ export default function Controller(props) {
                    onTimeUpdate={handlePlaybackProgress}/>
 
             <SeekSlider onSeek={handleSeek} audioElement={elementRef.current}/>
-            <PlaybackController onPlayPause={handlePlayPause} onViewSwitched={handleViewSwitched}/>
+            <PlaybackController onPlayPause={handlePlayPause} onViewSwitched={props.onViewSwitched}/>
 
         </div>
     )

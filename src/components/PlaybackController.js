@@ -23,7 +23,7 @@ export default function PlaybackController({onPlayPause, onViewSwitched}) {
             </div>
             <div className={'section end'}>
                 <button className={'ctrl-btn eq ' + (isEqView ? 'tapped' : '')}
-                        onClick={_ => onViewSwitched(PlayerView.Equalizer)}><ImEqualizer2/></button>
+                        onClick={_ => onViewSwitched(isEqView ? PlayerView.Visualizer : PlayerView.Equalizer)}><ImEqualizer2/></button>
                 <button className={'ctrl-btn loop'}><RiRepeatFill/></button>
             </div>
         </div>
