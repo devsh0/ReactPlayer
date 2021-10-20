@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useRef} from "react";
 import PlayerContext from "./PlayerContext";
 
-export default function Visualizer() {
+export default function VisualizerView() {
     const playerContext = useContext(PlayerContext);
     const canvasRef = useRef();
     const playingRef = useRef();

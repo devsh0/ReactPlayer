@@ -1,12 +1,13 @@
 import React, {useState} from 'react';
 import Controller from "./components/Controller";
 import Filterpack from "./Filterpack";
-import Visualizer from "./components/Visualizer";
-import Equalizer from "./components/Equalizer";
+import VisualizerView from "./components/VisualizerView";
+import EqualizerView from "./components/EqualizerView";
 import PlayerContext from "./components/PlayerContext";
 import {PlayerView} from "./components/PlayerView";
 
 import './index.css';
+import PlaylistView from "./components/PlaylistView";
 
 let _INITIAL_STATE_ = null;
 
@@ -125,12 +126,14 @@ export default function Player() {
     function getView() {
         switch (playerState.currentView) {
             case PlayerView.Equalizer:
-                return (<Equalizer onPresetChanged={handlePresetChanged}
-                                   onFilterTuned={handleFilterTuned}
-                                   onEqToggleRequested={handleEqToggleRequested}
-                                   onEqResetRequested={handleEqResetRequested}/>);
+                return (<EqualizerView onPresetChanged={handlePresetChanged}
+                                       onFilterTuned={handleFilterTuned}
+                                       onEqToggleRequested={handleEqToggleRequested}
+                                       onEqResetRequested={handleEqResetRequested}/>);
+            case PlayerView.Playlist:
+                return (<PlaylistView/>)
             default:
-                return <Visualizer/>
+                return <VisualizerView/>
         }
     }
 

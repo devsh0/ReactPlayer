@@ -7,12 +7,14 @@ import {PlayerView} from "./PlayerView";
 export default function PlaybackController({onPlayPause, onViewSwitched}) {
     const playerContext = useContext(PlayerContext);
     const isEqView = playerContext.currentView === PlayerView.Equalizer;
+    const isPlaylistView = playerContext.currentView === PlayerView.Playlist;
 
     return (
         <div className={'playback-controller'}>
             <div className={'section start'}>
                 <button className={'ctrl-btn shuffle'}><BiShuffle/></button>
-                <button className={'ctrl-btn playlist'}><RiPlayList2Fill/></button>
+                <button className={'ctrl-btn playlist ' + (isPlaylistView ? 'tapped' : '')}
+                        onClick={_ => onViewSwitched(isPlaylistView ? PlayerView.Visualizer : PlayerView.Playlist)}><RiPlayList2Fill/></button>
             </div>
             <div className={'section center'}>
                 <button className={'ctrl-btn'}><MdSkipPrevious/></button>
