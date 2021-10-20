@@ -37,7 +37,7 @@ export default function Controller(props) {
 
             <audio ref={elementRef}
                    crossOrigin={'anonymous'}
-                   src={'http://localhost:4000/bass.mp3'}
+                   src={'./biology.mp3'}
                    onEnded={props.onAudioUnloaded}
                    onCanPlay={handleAudioLoaded}
                    onTimeUpdate={handlePlaybackProgress}/>
