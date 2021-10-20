@@ -83,6 +83,10 @@ html, body {
     padding: 4px 10px;
 }
 
+.dummy {
+    display: none;
+}
+
 .header-container,
 .playlist-container {
     display: flex;
