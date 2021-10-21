@@ -1,50 +1,23 @@
-import React, {useContext, useRef} from "react";
+import React, {useContext} from "react";
 import SeekSlider from "./SeekSlider";
 import PlaybackController from "./PlaybackController";
 import PlayerContext from "./PlayerContext";
-import {PlayerView} from "./PlayerView";
 
 
 export default function Controller(props) {
     const playerContext = useContext(PlayerContext);
-    const elementRef = useRef();
-
-    const handleAudioLoaded = () => {
-        props.onAudioLoaded(elementRef.current);
-    }
-
-    const handleSeek = (newTime) => {
-        elementRef.current.currentTime = newTime;
-        props.onAudioSeeked(newTime);
-    }
 
     const handlePlayPause = () => {
-        if (playerContext.isPlaying) {
-            elementRef.current.pause();
+        if (playerContext.isPlaying)
             props.onAudioPaused();
-        } else {
-            elementRef.current.play();
+        else
             props.onAudioResumed();
-        }
-    }
-
-    const handlePlaybackProgress = (event) => {
-        props.onAudioSeeked(event.target.currentTime);
     }
 
     return (
         <div className={'audio-controls-container'}>
-
-            <audio ref={elementRef}
-                   crossOrigin={'anonymous'}
-                   src={'./biology.mp3'}
-                   onEnded={props.onAudioUnloaded}
-                   onCanPlay={handleAudioLoaded}
-                   onTimeUpdate={handlePlaybackProgress}/>
-
-            <SeekSlider onSeek={handleSeek} audioElement={elementRef.current}/>
+            <SeekSlider onSeek={props.onAudioSeeked}/>
             <PlaybackController onPlayPause={handlePlayPause} onViewSwitched={props.onViewSwitched}/>
-
         </div>
     )
 }

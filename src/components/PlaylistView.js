@@ -1,10 +1,9 @@
 import {useContext, useRef} from "react";
 import PlayerContext from "./PlayerContext";
 import {AiOutlineFileAdd, AiOutlineFileExcel, IoMdClose} from "react-icons/all";
-import {AudioFile} from "./Session";
+import {fileToMediaResource} from "./Utils";
 
-const audioFiles = [];
-export default function PlaylistView() {
+export default function PlaylistView({onMediaResourceLoaded}) {
     const playerContext = useContext(PlayerContext);
     const dummyInputRef = useRef();
 
@@ -14,42 +13,9 @@ export default function PlaylistView() {
 
     function handleFileSelect() {
         const input = dummyInputRef.current;
-        const files = input.files;
-        let index = 0;
-
-        // Collect metadata for each of the selected media.
-        const audio = new Audio();
-        audio.addEventListener('loadedmetadata', () => {
-            if (index < files.length - 1) {
-                loadMeta(files[index]);
-            } else {
-                console.log('All files loaded!');
-            }
-        })
-
-        function loadMeta(file) {
-            const media = URL.createObjectURL(file);
-            audioFiles.push(new AudioFile(media, file.name, audio.duration));
-            audio.src = URL.createObjectURL(files[++index]);
-        }
-
-        audio.src = URL.createObjectURL(files[index]);
-    }
-
-    function kickAPlay() {
-        if (audioFiles.length === 0) {
-            console.log('Nothing to play!');
-            return;
-        }
-        const index = Math.floor(Math.random() * audioFiles.length);
-        const file = audioFiles[index];
-        console.log('About to be played...');
-        file.dump();
-        const audio = new Audio();
-        audio.addEventListener('canplay', () => {
-            audio.play();
-        })
-        audio.src = file.object;
+        fileToMediaResource(input.files).then((mediaResources) => {
+            onMediaResourceLoaded(mediaResources);
+        });
     }
 
     function getSongs(howMany) {
@@ -83,7 +49,6 @@ export default function PlaylistView() {
             <div className={'playlist-container'}>
                 {getSongs(20)}
             </div>
-            <button onClick={kickAPlay}>Play Now</button>
         </div>
     );
 }

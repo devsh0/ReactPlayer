@@ -1,29 +1,33 @@
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import Controller from "./components/Controller";
-import Filterpack from "./Filterpack";
 import VisualizerView from "./components/VisualizerView";
 import EqualizerView from "./components/EqualizerView";
+import PlaylistView from "./components/PlaylistView";
+import Filterpack from "./Filterpack";
+import Session from "./components/Session";
 import PlayerContext from "./components/PlayerContext";
 import {PlayerView} from "./components/PlayerView";
-
+import {fileToMediaResource} from "./components/Utils";
 import './index.css';
-import PlaylistView from "./components/PlaylistView";
 
 let _INITIAL_STATE_ = null;
 
 const init = () => {
     if (_INITIAL_STATE_) return _INITIAL_STATE_;
 
+    const audioEl = new Audio();
     const audioContext = new AudioContext();
     const analyser = audioContext.createAnalyser();
     const filterpack = new Filterpack(audioContext);
 
     _INITIAL_STATE_ = {
+        audioElement: audioEl,
         audioContext: audioContext,
         audioStreamNode: null,
         analyserNode: analyser,
         filterpackNode: filterpack,
         destinationNode: audioContext.destination,
+        session: new Session(audioEl),
         audioDuration: 0,
         currentTime: 0,
         isPlaying: false,
@@ -39,69 +43,121 @@ const init = () => {
 
 export default function Player() {
     const [playerState, setPlayerState] = useState(init());
+    const stateRef = useRef(playerState);
 
-    function loadAudioFromElement(audioElement) {
-        const state = {...playerState};
+
+    useEffect(() => {
+        const audioEl = playerState.audioElement;
+        const session = playerState.session;
+
+        audioEl.crossOrigin = 'anonymous';
+        audioEl.addEventListener('canplay', handleAudioCanPlay);
+        audioEl.addEventListener('ended', handleAudioEnded);
+        audioEl.addEventListener('timeupdate', handlePlaybackProgressed);
+
+        function loadMedia() {
+            async function fetchMedia(url) {
+                const response = await fetch(url);
+                const data = await response.blob();
+                return new File([data], "biology.mp3", {type: 'audio/mp3'});
+            }
+
+            fetchMedia('http://localhost:3000/kda.mp3').then((file) => {
+                fileToMediaResource([file]).then((mediaResources) => {
+                    mediaResources.forEach(resource => session.enqueueMedia(resource));
+                    session.loadNext();
+                }).catch((error) => console.log(error.message))
+            });
+        }
+
+        // Load a few audio files from server.
+        loadMedia();
+    }, [])
+
+    function updateState(state) {
+        stateRef.current = state;
+        setPlayerState(stateRef.current);
+    }
+
+    function loadAudioFromElement() {
+        const state = {...stateRef.current};
+        const audioElement = state.audioElement;
         state.audioStreamNode = state.audioContext.createMediaStreamSource(audioElement.captureStream());
         state.filterpackNode.connect(state.audioStreamNode, state.analyserNode);
         state.analyserNode.connect(state.destinationNode);
         state.audioDuration = audioElement.duration;
         audioElement.volume = 0.001;
-        setPlayerState(state);
+        updateState(state);
     }
 
     function unloadAudio() {
-        const state = {...playerState};
+        const state = {...stateRef.current};
         state.audioStreamNode.disconnect();
         state.audioDuration = 0;
         state.currentTime = 0;
         state.isPlaying = false;
-        setPlayerState(state);
+        stateRef.current = state;
+        updateState(state);
     }
 
-    function handleAudioLoaded(audioElement) {
-        loadAudioFromElement(audioElement);
+    function handleAudioCanPlay() {
+        loadAudioFromElement();
     }
 
-    function handleAudioUnloaded() {
+    function handleAudioEnded() {
         unloadAudio();
     }
 
     function handleAudioPaused() {
-        const state = {...playerState};
+        const state = {...stateRef.current};
+        state.audioElement.pause();
         state.isPlaying = false;
-        setPlayerState(state);
+        stateRef.current = state;
+        updateState(state);
     }
 
     function handleAudioResumed() {
-        const state = {...playerState};
+        const state = {...stateRef.current};
+        state.audioElement.play();
         // Logging does it for now.
         state.audioContext.resume().catch(error => console.log(error));
         state.isPlaying = true;
-        setPlayerState(state);
+        stateRef.current = state;
+        updateState(state);
+    }
+
+    function handlePlaybackProgressed() {
+        const state = {...stateRef.current};
+        state.currentTime = state.audioElement.currentTime;
+        stateRef.current = state;
+        updateState(state);
     }
 
     function handleAudioSeeked(newTime) {
-        const state = {...playerState};
+        const state = {...stateRef.current};
+        state.audioElement.currentTime = newTime;
         state.currentTime = newTime;
-        setPlayerState(state);
+        stateRef.current = state;
+        updateState(state);
     }
 
     function handleViewSwitched(view) {
-        const state = {...playerState};
+        const state = {...stateRef.current};
         state.currentView = view;
-        setPlayerState(state);
+        stateRef.current = state;
+        updateState(state);
     }
 
     function handlePresetChanged(key) {
-        const state = {...playerState};
+        const state = {...stateRef.current};
         state.equalizer.currentPreset = state.filterpackNode.getPreset(key);
         state.filterpackNode.setCurrentPreset(key);
-        setPlayerState(state);
+        stateRef.current = state;
+        updateState(state);
     }
 
     function handleFilterTuned(index, newGain) {
-        const state = {...playerState};
+        const state = {...stateRef.current};
         const filter = state.filterpackNode.getFilters()[index];
         filter.setGain(newGain);
         state.filterpackNode.commitCustomPreset();
@@ -111,14 +167,15 @@ export default function Player() {
     }
 
     function handleEqToggleRequested() {
-        const state = {...playerState};
+        const state = {...stateRef.current};
         state.equalizer.isEnabled = !state.equalizer.isEnabled;
         state.filterpackNode.setEnabled(state.equalizer.isEnabled);
+        stateRef.current = state;
         setPlayerState(state);
     }
 
     function handleEqResetRequested() {
-        const state = {...playerState};
+        const state = {...stateRef.current};
         state.filterpackNode.reset();
         handlePresetChanged('custom');
     }
@@ -141,9 +198,7 @@ export default function Player() {
         <PlayerContext.Provider value={playerState}>
             <div className={'player'}>
                 {getView()}
-                <Controller onAudioLoaded={handleAudioLoaded}
-                            onAudioUnloaded={handleAudioUnloaded}
-                            onAudioPaused={handleAudioPaused}
+                <Controller onAudioPaused={handleAudioPaused}
                             onAudioResumed={handleAudioResumed}
                             onViewSwitched={handleViewSwitched}
                             onAudioSeeked={handleAudioSeeked}/>
