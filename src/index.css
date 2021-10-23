@@ -477,6 +477,7 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
     background: transparent;
     border: none;
     cursor: pointer;
@@ -502,8 +503,7 @@ html, body {
 }
 
 .ctrl-btn:hover,
-.ctrl-btn.tapped,
-.ctrl-btn:hover {
+.ctrl-btn.tapped {
     background: rgba(0, 0, 0, .9) !important;
     box-shadow: 0 0 2px black;
     color: white;
@@ -516,6 +516,17 @@ html, body {
 
 .ctrl-btn.shuffle {
     font-size: 18px;
+}
+
+.ctrl-btn .repeat-indicator {
+    display: none;
+}
+
+.ctrl-btn .repeat-indicator.show {
+    display: inline;
+    font-size: .4em;
+    position: absolute;
+    font-weight: bold;
 }
 
 /* Seek Slider */

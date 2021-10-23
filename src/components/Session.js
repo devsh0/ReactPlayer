@@ -260,6 +260,12 @@ export default class Session {
         }
     }
 
+    handleAudioSelected(media) {
+        this.markAllUnplayed();
+        this.currentMedia = media;
+        this.triggerPlay();
+    }
+
     markPlayed(name) {
         const id = MediaResource.getIdForName(name);
         const media = this.findMediaById(id);

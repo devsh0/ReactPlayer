@@ -20,6 +20,8 @@ export default function Controller(props) {
             <PlaybackController
                 onPlayPause={handlePlayPause}
                 onViewSwitched={props.onViewSwitched}
+                onNext={props.onNext}
+                onPrev={props.onPrev}
                 onToggleShuffle={props.onToggleShuffle}
                 onToggleLoop={props.onToggleLoop}
             />

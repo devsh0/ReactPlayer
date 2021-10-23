@@ -124,10 +124,7 @@ export default function Player() {
     }
 
     function handleAudioSelected(media) {
-        const session = playerState.session;
-        playerState.session.markAllUnplayed();
-        session.currentMedia = media;
-        handleAudioResumed();
+        playerState.session.handleAudioSelected(media);
     }
 
     function handleAudioRemovedFromPlaylist(media) {
@@ -157,6 +154,20 @@ export default function Player() {
         state.audioContext.resume().catch(error => console.log(error));
         state.isPlaying = true;
         stateRef.current = state;
+        updateState(state);
+    }
+
+    function handleNextRequested() {
+        const state = {...stateRef.current};
+        state.session.loadNext();
+        triggerPlay();
+        updateState(state);
+    }
+
+    function handlePrevRequested() {
+        const state = {...stateRef.current};
+        state.session.loadPrev();
+        triggerPlay();
         updateState(state);
     }
 
@@ -243,6 +254,8 @@ export default function Player() {
                 <Controller onAudioPaused={handleAudioPaused}
                             onAudioResumed={handleAudioResumed}
                             onViewSwitched={handleViewSwitched}
+                            onNext={handleNextRequested}
+                            onPrev={handlePrevRequested}
                             onAudioSeeked={handleAudioSeeked}
                             onToggleShuffle={handleToggleShuffle}
                             onToggleLoop={handleToggleLoop}
