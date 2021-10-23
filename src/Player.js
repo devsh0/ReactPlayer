@@ -4,7 +4,7 @@ import VisualizerView from "./components/VisualizerView";
 import EqualizerView from "./components/EqualizerView";
 import PlaylistView from "./components/PlaylistView";
 import Filterpack from "./Filterpack";
-import Session from "./components/Session";
+import Session, {MediaResource} from "./components/Session";
 import PlayerContext from "./components/PlayerContext";
 import {PlayerView} from "./components/PlayerView";
 import {fileToMediaResource} from "./components/Utils";
@@ -44,7 +44,7 @@ const init = () => {
 export default function Player() {
     const [playerState, setPlayerState] = useState(init());
     playerState.session = playerState.session === null
-        ? new Session(playerState.audioElement, handleSessionUpdated, triggerPlay)
+        ? new Session(playerState.audioElement, handleSessionUpdated, triggerPlay, triggerPlaybackReset)
         : playerState.session;
     const stateRef = useRef(playerState);
 
@@ -70,7 +70,6 @@ export default function Player() {
             fetchMedia('./kda.mp3').then((file) => {
                 fileToMediaResource([file]).then((mediaResources) => {
                     mediaResources.forEach(resource => session.enqueueMedia(resource));
-                    session.loadNext();
                 }).catch((error) => console.log(error.message))
             });
         }
@@ -149,6 +148,8 @@ export default function Player() {
 
     function handleAudioResumed() {
         const state = {...stateRef.current};
+        if (!state.session.canPlay())
+            return;
         state.audioElement.play();
         // Logging does it for now.
         state.audioContext.resume().catch(error => console.log(error));
@@ -162,6 +163,10 @@ export default function Player() {
         state.session.loadNext();
         triggerPlay();
         updateState(state);
+    }
+
+    function handlePlaylistCleared() {
+        playerState.session.reset();
     }
 
     function handlePrevRequested() {
@@ -229,6 +234,20 @@ export default function Player() {
         handleAudioResumed();
     }
 
+    function resetPlayback() {
+        const state = {...stateRef.current};
+        state.audioElement.src = '';
+        state.audioElement.pause();
+        state.audioElement.currentTime = 0;
+        state.audioDuration = 0;
+        state.isPlaying = false;
+        updateState(state);
+    }
+
+    function triggerPlaybackReset() {
+        resetPlayback();
+    }
+
     function getView() {
         switch (playerState.currentView) {
             case PlayerView.Equalizer:
@@ -241,6 +260,7 @@ export default function Player() {
                     onMediaResourceLoaded={handleMediaResourceLoaded}
                     onAudioSelected={handleAudioSelected}
                     onAudioRemoved={handleAudioRemovedFromPlaylist}
+                    onPlaylistCleared={handlePlaylistCleared}
                 />)
             default:
                 return <VisualizerView/>

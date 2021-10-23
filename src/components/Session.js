@@ -56,7 +56,7 @@ export class MediaResource {
 }
 
 export default class Session {
-    constructor(element, onSessionUpdate, triggerPlay) {
+    constructor(element, onSessionUpdate, triggerPlay, triggerPlaybackReset) {
         this._element = element;
         this._currentMedia = null;
         this._shuffle = false;
@@ -65,6 +65,7 @@ export default class Session {
         this._playlist = [];
         this.onSessionUpdate = onSessionUpdate;
         this.triggerPlay = triggerPlay;
+        this.triggerPlaybackReset = triggerPlaybackReset;
     }
 
     playlistEmpty() {
@@ -80,6 +81,8 @@ export default class Session {
         const queueable = !exists && (media instanceof MediaResource);
         if (queueable)
             this.playlist.push(media);
+        if (!this.currentMedia)
+            this.currentMedia = media;
         this.onSessionUpdate();
     }
 
@@ -88,8 +91,10 @@ export default class Session {
         if (media) {
             media.dispose();
             this._playlist = this.playlist.filter(m => m.id !== media.id);
-            if (media.equals(this.currentMedia))
-                this.handleAudioEnded();
+            if (media.equals(this.currentMedia)) {
+                this._currentMedia = null;
+                this.triggerPlaybackReset();
+            }
             this.onSessionUpdate();
         }
     }
@@ -256,7 +261,11 @@ export default class Session {
             if (this.loop) {
                 this.markAllUnplayed();
                 this.handleAudioEnded();
+                return;
             }
+
+            this._currentMedia = null;
+            this.triggerPlaybackReset();
         }
     }
 
@@ -284,13 +293,15 @@ export default class Session {
         }
     }
 
+    canPlay() {
+        return this.currentMedia !== null;
+    }
+
     reset() {
         this._currentMedia = null;
         this.playlist.forEach(media => media.dispose());
+        this.triggerPlaybackReset();
         this._playlist = [];
-        this.disableShuffle();
-        this.disableRepeat();
-        this.disableLoop();
         this.onSessionUpdate();
     }
 }

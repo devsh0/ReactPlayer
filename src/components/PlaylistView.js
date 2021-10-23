@@ -11,6 +11,11 @@ export default function PlaylistView(props) {
         dummyInputRef.current.click();
     }
 
+    // Fixme: this callback won't be invoked if this batch of selected files
+    //  doesn't differ from the last batch of selected files. So if someone
+    //  decided to remove everything from the playlist and then add the same
+    //  files again, nothing will be added. Everything's good if the current
+    //  batch differs from the last batch even by just one file.
     function handleFileSelect() {
         const input = dummyInputRef.current;
         fileToMediaResource(input.files).then((mediaResources) => {
@@ -53,7 +58,7 @@ export default function PlaylistView(props) {
                 <input className={'input search'} type={'text'} placeholder={'Search...'}/>
                 <div className={'button-container'}>
                     <button className={'btn add-song'} onClick={handleAudioInput}>Add</button>
-                    <button className={'btn add-song'}>Clear</button>
+                    <button className={'btn remove-song'} onClick={props.onPlaylistCleared}>Clear</button>
                 </div>
             </div>
             <div className={'playlist-container'}>
