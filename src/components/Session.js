@@ -72,10 +72,6 @@ export default class Session {
         return this.playlist.length === 0;
     }
 
-    findMediaById(id) {
-        return this.playlist.find(media => media.id === id);
-    }
-
     enqueueMedia(media) {
         const exists = this.playlist.some(m => m.id === media.id);
         const queueable = !exists && (media instanceof MediaResource);
@@ -86,21 +82,14 @@ export default class Session {
         this.onSessionUpdate();
     }
 
-    dequeueMediaById(id) {
-        const media = this.findMediaById(id);
-        if (media) {
-            media.dispose();
-            this._playlist = this.playlist.filter(m => m.id !== media.id);
-            if (media.equals(this.currentMedia)) {
-                this._currentMedia = null;
-                this.triggerPlaybackReset();
-            }
-            this.onSessionUpdate();
-        }
-    }
-
     dequeueMedia(media) {
-        this.dequeueMediaById(media.id);
+        media.dispose();
+        this._playlist = this.playlist.filter(m => m.id !== media.id);
+        if (media.equals(this.currentMedia)) {
+            this._currentMedia = null;
+            this.triggerPlaybackReset();
+        }
+        this.onSessionUpdate();
     }
 
     get playlist() {
@@ -163,7 +152,6 @@ export default class Session {
 
     disableRepeat() {
         console.log('Disabling repeat');
-        this.markPlayed(this.currentMedia.name);
         this._repeat = false;
         this.onSessionUpdate();
     }
@@ -194,12 +182,12 @@ export default class Session {
         if (!this._element) return;
         this._currentMedia = media;
         this._element.src = media.object;
-        this.currentMedia.markPlayed();
+        this.markPlayed(this.currentMedia);
         this.onSessionUpdate();
     }
 
     markAllUnplayed() {
-        this.playlist.forEach(media => this.markUnplayed(media.name));
+        this.playlist.forEach(media => this.markUnplayed(media));
         this.onSessionUpdate();
     }
 
@@ -275,22 +263,14 @@ export default class Session {
         this.triggerPlay();
     }
 
-    markPlayed(name) {
-        const id = MediaResource.getIdForName(name);
-        const media = this.findMediaById(id);
-        if (media) {
-            media.markPlayed();
-            this.onSessionUpdate();
-        }
+    markPlayed(media) {
+        media.markPlayed();
+        this.onSessionUpdate();
     }
 
-    markUnplayed(name) {
-        const id = MediaResource.getIdForName(name);
-        const media = this.findMediaById(id);
-        if (media) {
-            media.markUnplayed();
-            this.onSessionUpdate();
-        }
+    markUnplayed(media) {
+        media.markUnplayed();
+        this.onSessionUpdate();
     }
 
     canPlay() {

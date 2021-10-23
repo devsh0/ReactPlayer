@@ -31,6 +31,7 @@ export function fileToMediaResource(files) {
     return promise;
 }
 
+// Fixme: Hours...huh?
 export function getFormattedMediaTime(time) {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
