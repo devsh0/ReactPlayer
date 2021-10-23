@@ -61,19 +61,23 @@ export default function Player() {
         audioEl.addEventListener('ended', handleAudioEnded);
         audioEl.addEventListener('timeupdate', handlePlaybackProgressed);
 
-        // Load a few static audio files from server.
         function loadMedia() {
             const session = playerState.session;
-
-            async function fetchMedia(url) {
-                const name = url.slice(2);
-                const response = await fetch(url);
-                const data = await response.blob();
-                return new File([data], name, {type: 'audio/mp3'});
+            async function fetchMedia(urls) {
+                const files = [];
+                for (const url of urls) {
+                    const name = url.slice(2);
+                    const response = await fetch(url);
+                    const data = await response.blob();
+                    files.push(new File([data], name, {type: 'audio/mp3'}));
+                }
+                return files;
             }
 
-            fetchMedia('./Drum-go-dum.mp3').then((file) => {
-                fileToMediaResource([file]).then((mediaResources) => {
+            // Preload a few static audio files from server.
+            const preloadMediaUrls = ['./Drum-go-dum.mp3', './Biology.mp3', './Tokyo-Drift-bass-heavy.mp3'];
+            fetchMedia(preloadMediaUrls).then((files) => {
+                fileToMediaResource(files).then((mediaResources) => {
                     mediaResources.forEach(resource => session.enqueueMedia(resource));
                 }).catch((error) => console.log(error.message))
             });
