@@ -1,4 +1,4 @@
 import ReactDOM from 'react-dom';
-import Player from "./Player";
+import Player from "./components/Player";
 
 ReactDOM.render(<Player/>, document.getElementById('root'));

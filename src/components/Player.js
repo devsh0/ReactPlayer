@@ -1,14 +1,14 @@
 import React, {useEffect, useRef, useState} from 'react';
-import Controller from "./components/Controller";
-import VisualizerView from "./components/VisualizerView";
-import EqualizerView from "./components/EqualizerView";
-import PlaylistView from "./components/PlaylistView";
+import Controller from "./Controller";
+import VisualizerView from "./VisualizerView";
+import EqualizerView from "./EqualizerView";
+import PlaylistView from "./PlaylistView";
 import Filterpack from "./Filterpack";
-import Session from "./components/Session";
-import PlayerContext from "./components/PlayerContext";
-import {PlayerView} from "./components/PlayerView";
-import {fileToMediaResource} from "./components/Utils";
-import './index.css';
+import Session from "./Session";
+import PlayerContext from "./PlayerContext";
+import {PlayerView} from "./PlayerView";
+import {fileToMediaResource} from "./Utils";
+import '../index.css';
 
 let _INITIAL_STATE_ = null;
 
