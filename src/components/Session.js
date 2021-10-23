@@ -222,6 +222,7 @@ export default class Session {
 
     loadAuto() {
         if (this.repeat) {
+            // eslint-disable-next-line no-self-assign
             this.currentMedia = this.currentMedia;
             return;
         }

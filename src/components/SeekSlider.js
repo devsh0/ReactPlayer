@@ -14,6 +14,7 @@ export default function SeekSlider({onSeek}) {
         }
         const newWidth = (inputRef.current.clientWidth / (playerContext.audioDuration / playerContext.currentTime)) + 1;
         overlay.current.style.width = newWidth + 'px';
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [playerContext.currentTime])
 
     return (

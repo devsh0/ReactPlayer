@@ -41,6 +41,7 @@ export default function EqualizerBand({index, onBandTuned}) {
 
         fillRef.current.style.maxHeight = heightBound + 'px';
         fillRef.current.style.height = fillHeight + 'px';
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [gain])
 
     // To have some way of tweaking the bands in mobile devices.

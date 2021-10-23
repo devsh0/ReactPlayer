@@ -72,7 +72,7 @@ export default function Player() {
                 return new File([data], name, {type: 'audio/mp3'});
             }
 
-            fetchMedia('./kda.mp3').then((file) => {
+            fetchMedia('./Drum-go-dum.mp3').then((file) => {
                 fileToMediaResource([file]).then((mediaResources) => {
                     mediaResources.forEach(resource => session.enqueueMedia(resource));
                 }).catch((error) => console.log(error.message))
@@ -80,6 +80,7 @@ export default function Player() {
         }
 
         loadMedia();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     function updateState(state) {

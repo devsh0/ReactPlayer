@@ -65,6 +65,7 @@ export default function VisualizerView() {
             }
         }
         draw();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [playerContext.isPlaying]);
 
     return (

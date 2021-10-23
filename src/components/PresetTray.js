@@ -38,10 +38,12 @@ export default function PresetTray({onPresetChanged}) {
 
     useEffect(() => {
         executeSelect(equalizer.currentPreset.key);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [playerContext.equalizer.currentPreset.key])
 
     useEffect(() => {
         setDropped(isDropped && equalizer.isEnabled);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [eqEnabled])
 
     const getPresetItems = () => {
