@@ -195,6 +195,9 @@ html, body {
     cursor: pointer;
 }
 
+.row.current {
+    color: white !important;
+}
 
 
 /* Preset Container */

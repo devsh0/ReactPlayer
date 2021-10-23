@@ -4,7 +4,7 @@ import React, {useContext} from "react";
 import PlayerContext from "./PlayerContext";
 import {PlayerView} from "./PlayerView";
 
-export default function PlaybackController({onPlayPause, onViewSwitched}) {
+export default function PlaybackController({onPlayPause, onViewSwitched, onToggleShuffle, onToggleLoop}) {
     const playerContext = useContext(PlayerContext);
     const isEqView = playerContext.currentView === PlayerView.Equalizer;
     const isPlaylistView = playerContext.currentView === PlayerView.Playlist;
@@ -12,7 +12,7 @@ export default function PlaybackController({onPlayPause, onViewSwitched}) {
     return (
         <div className={'playback-controller'}>
             <div className={'section start'}>
-                <button className={'ctrl-btn shuffle'}><BiShuffle/></button>
+                <button className={'ctrl-btn shuffle'} onClick={onToggleShuffle}><BiShuffle/></button>
                 <button className={'ctrl-btn playlist ' + (isPlaylistView ? 'tapped' : '')}
                         onClick={_ => onViewSwitched(isPlaylistView ? PlayerView.Visualizer : PlayerView.Playlist)}><RiPlayList2Fill/></button>
             </div>
@@ -26,7 +26,7 @@ export default function PlaybackController({onPlayPause, onViewSwitched}) {
             <div className={'section end'}>
                 <button className={'ctrl-btn eq ' + (isEqView ? 'tapped' : '')}
                         onClick={_ => onViewSwitched(isEqView ? PlayerView.Visualizer : PlayerView.Equalizer)}><ImEqualizer2/></button>
-                <button className={'ctrl-btn loop'}><RiRepeatFill/></button>
+                <button onClick={onToggleLoop} className={'ctrl-btn repeat loop'}><RiRepeatFill/></button>
             </div>
         </div>
     );

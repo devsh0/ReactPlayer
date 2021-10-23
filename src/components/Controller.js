@@ -17,7 +17,12 @@ export default function Controller(props) {
     return (
         <div className={'audio-controls-container'}>
             <SeekSlider onSeek={props.onAudioSeeked}/>
-            <PlaybackController onPlayPause={handlePlayPause} onViewSwitched={props.onViewSwitched}/>
+            <PlaybackController
+                onPlayPause={handlePlayPause}
+                onViewSwitched={props.onViewSwitched}
+                onToggleShuffle={props.onToggleShuffle}
+                onToggleLoop={props.onToggleLoop}
+            />
         </div>
     )
 }

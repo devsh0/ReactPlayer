@@ -1,9 +1,9 @@
 import {useContext, useRef} from "react";
 import PlayerContext from "./PlayerContext";
-import {AiOutlineFileAdd, AiOutlineFileExcel, IoMdClose} from "react-icons/all";
-import {fileToMediaResource} from "./Utils";
+import {IoMdClose} from "react-icons/all";
+import {fileToMediaResource, getFormattedMediaName, getFormattedMediaTime} from "./Utils";
 
-export default function PlaylistView({onMediaResourceLoaded}) {
+export default function PlaylistView(props) {
     const playerContext = useContext(PlayerContext);
     const dummyInputRef = useRef();
 
@@ -14,24 +14,34 @@ export default function PlaylistView({onMediaResourceLoaded}) {
     function handleFileSelect() {
         const input = dummyInputRef.current;
         fileToMediaResource(input.files).then((mediaResources) => {
-            onMediaResourceLoaded(mediaResources);
+            props.onMediaResourceLoaded(mediaResources);
         });
     }
 
-    function getSongs(howMany) {
-        let songs = [];
-        for (let i = 0; i < howMany; i++) {
-            songs.push((
-                <div className={'row'}>
-                    <div className={'title'}>Here goes the name of the song</div>
+    function handleAudioRemoved(event, media) {
+        event.stopPropagation();
+        props.onAudioRemoved(media);
+    }
+
+    function getAudioRows() {
+        let audioList = [];
+        const session = playerContext.session;
+        for (const media of session.playlist) {
+            const current = session.currentMedia;
+            const playingThis = current && current.equals(media);
+            const extraClasses = playingThis ? 'current' : '';
+
+            audioList.push((
+                <div key={media.id} className={`row ${extraClasses}`} onClick={() => props.onAudioSelected(media)}>
+                    <div className={'title'}>{getFormattedMediaName(media.name)}</div>
                     <div className={'metadata'}>
-                        <span className={'duration'}>03:40</span>
-                        <button className={'remove'}><IoMdClose/></button>
+                        <span className={'duration'}>{getFormattedMediaTime(media.duration)}</span>
+                        <button className={'remove'} onClick={(e) => handleAudioRemoved(e, media)}><IoMdClose/></button>
                     </div>
                 </div>
             ));
         }
-        return songs;
+        return audioList;
     }
 
     return (
@@ -42,12 +52,12 @@ export default function PlaylistView({onMediaResourceLoaded}) {
             <div className={'header-container'}>
                 <input className={'input search'} type={'text'} placeholder={'Search...'}/>
                 <div className={'button-container'}>
-                    <button className={'btn add-song'} onClick={handleAudioInput}>Add<AiOutlineFileAdd/></button>
-                    <button className={'btn add-song'}>Clear<AiOutlineFileExcel/></button>
+                    <button className={'btn add-song'} onClick={handleAudioInput}>Add</button>
+                    <button className={'btn add-song'}>Clear</button>
                 </div>
             </div>
             <div className={'playlist-container'}>
-                {getSongs(20)}
+                {getAudioRows()}
             </div>
         </div>
     );

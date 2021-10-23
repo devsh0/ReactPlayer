@@ -27,7 +27,7 @@ const init = () => {
         analyserNode: analyser,
         filterpackNode: filterpack,
         destinationNode: audioContext.destination,
-        session: new Session(audioEl),
+        session: null,
         audioDuration: 0,
         currentTime: 0,
         isPlaying: false,
@@ -43,6 +43,9 @@ const init = () => {
 
 export default function Player() {
     const [playerState, setPlayerState] = useState(init());
+    playerState.session = playerState.session === null
+        ? new Session(playerState.audioElement, handleSessionUpdated, triggerPlay)
+        : playerState.session;
     const stateRef = useRef(playerState);
 
 
@@ -55,14 +58,16 @@ export default function Player() {
         audioEl.addEventListener('ended', handleAudioEnded);
         audioEl.addEventListener('timeupdate', handlePlaybackProgressed);
 
+        // Load a few static audio files from server.
         function loadMedia() {
             async function fetchMedia(url) {
+                const name = url.slice(2);
                 const response = await fetch(url);
                 const data = await response.blob();
-                return new File([data], "biology.mp3", {type: 'audio/mp3'});
+                return new File([data], name, {type: 'audio/mp3'});
             }
 
-            fetchMedia('http://localhost:3000/kda.mp3').then((file) => {
+            fetchMedia('./kda.mp3').then((file) => {
                 fileToMediaResource([file]).then((mediaResources) => {
                     mediaResources.forEach(resource => session.enqueueMedia(resource));
                     session.loadNext();
@@ -70,7 +75,6 @@ export default function Player() {
             });
         }
 
-        // Load a few audio files from server.
         loadMedia();
     }, [])
 
@@ -106,6 +110,36 @@ export default function Player() {
 
     function handleAudioEnded() {
         unloadAudio();
+        playerState.session.handleAudioEnded();
+    }
+
+    function handleSessionUpdated() {
+        const state = {...stateRef.current};
+        updateState(state);
+    }
+
+    function handleMediaResourceLoaded(mediaResources) {
+        for (const media of mediaResources)
+            playerState.session.enqueueMedia(media);
+    }
+
+    function handleAudioSelected(media) {
+        const session = playerState.session;
+        playerState.session.markAllUnplayed();
+        session.currentMedia = media;
+        handleAudioResumed();
+    }
+
+    function handleAudioRemovedFromPlaylist(media) {
+        playerState.session.dequeueMedia(media);
+    }
+
+    function handleToggleShuffle() {
+        playerState.session.toggleShuffle();
+    }
+
+    function handleToggleLoop() {
+        playerState.session.toggleLoop();
     }
 
     function handleAudioPaused() {
@@ -180,6 +214,10 @@ export default function Player() {
         handlePresetChanged('custom');
     }
 
+    function triggerPlay() {
+        handleAudioResumed();
+    }
+
     function getView() {
         switch (playerState.currentView) {
             case PlayerView.Equalizer:
@@ -188,7 +226,11 @@ export default function Player() {
                                        onEqToggleRequested={handleEqToggleRequested}
                                        onEqResetRequested={handleEqResetRequested}/>);
             case PlayerView.Playlist:
-                return (<PlaylistView/>)
+                return (<PlaylistView
+                    onMediaResourceLoaded={handleMediaResourceLoaded}
+                    onAudioSelected={handleAudioSelected}
+                    onAudioRemoved={handleAudioRemovedFromPlaylist}
+                />)
             default:
                 return <VisualizerView/>
         }
@@ -201,7 +243,10 @@ export default function Player() {
                 <Controller onAudioPaused={handleAudioPaused}
                             onAudioResumed={handleAudioResumed}
                             onViewSwitched={handleViewSwitched}
-                            onAudioSeeked={handleAudioSeeked}/>
+                            onAudioSeeked={handleAudioSeeked}
+                            onToggleShuffle={handleToggleShuffle}
+                            onToggleLoop={handleToggleLoop}
+                />
             </div>
         </PlayerContext.Provider>
     );

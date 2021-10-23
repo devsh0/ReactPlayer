@@ -38,6 +38,7 @@ export class MediaResource {
     }
 
     dispose() {
+        console.log('Cleaning up resources for ' + this.name);
         URL.revokeObjectURL(this._object);
     }
 
@@ -55,43 +56,41 @@ export class MediaResource {
 }
 
 export default class Session {
-    constructor(element) {
+    constructor(element, onSessionUpdate, triggerPlay) {
         this._element = element;
         this._currentMedia = null;
         this._shuffle = false;
         this._loop = false;
         this._repeat = false;
         this._playlist = [];
+        this.onSessionUpdate = onSessionUpdate;
+        this.triggerPlay = triggerPlay;
     }
 
     playlistEmpty() {
-        return this._playlist.length === 0;
+        return this.playlist.length === 0;
     }
 
     findMediaById(id) {
-        return this._playlist.find(media => media.id === id);
-    }
-
-    set element(element) {
-        if (element instanceof HTMLAudioElement) {
-            this._element = element;
-        } else {
-            console.warn('Attempted setting session audio element that is not an HTMLAudioElement');
-        }
+        return this.playlist.find(media => media.id === id);
     }
 
     enqueueMedia(media) {
-        const exists = this._playlist.some(m => m.id === media.id);
-        const valid = !exists && (media instanceof MediaResource);
-        if (valid) this._playlist.push(media);
+        const exists = this.playlist.some(m => m.id === media.id);
+        const queueable = !exists && (media instanceof MediaResource);
+        if (queueable)
+            this.playlist.push(media);
+        this.onSessionUpdate();
     }
 
     dequeueMediaById(id) {
-        // todo: dequeue media might trigger a playback change.
         const media = this.findMediaById(id);
         if (media) {
             media.dispose();
-            this._playlist = this._playlist.filter(m => m.id !== media.id);
+            this._playlist = this.playlist.filter(m => m.id !== media.id);
+            if (media.equals(this.currentMedia))
+                this.handleAudioEnded();
+            this.onSessionUpdate();
         }
     }
 
@@ -108,11 +107,15 @@ export default class Session {
     }
 
     enableLoop() {
+        console.log('Enabling loop');
         this._loop = true;
+        this.onSessionUpdate();
     }
 
     disableLoop() {
+        console.log('Disabling loop');
         this._loop = false;
+        this.onSessionUpdate();
     }
 
     get shuffle() {
@@ -120,43 +123,85 @@ export default class Session {
     }
 
     enableShuffle() {
+        console.log('Enabling shuffle');
         this._shuffle = true;
+        this.onSessionUpdate();
     }
 
     disableShuffle() {
+        console.log('Disabling shuffle');
         this._shuffle = false;
+        this.onSessionUpdate();
+    }
+
+    toggleShuffle() {
+        if (this.shuffle) {
+            this.disableShuffle();
+        } else this.enableShuffle();
     }
 
     get repeat() {
         return this._repeat;
     }
 
+    playlistExhausted() {
+        let exhausted = true;
+        this.playlist.filter(media => exhausted = exhausted && media.played)
+        return exhausted;
+    }
+
     enableRepeat() {
-        this.markUnplayed(this._currentMedia.name);
+        console.log('Enabling repeat');
         this._repeat = true;
+        this.onSessionUpdate();
     }
 
     disableRepeat() {
-        this.markPlayed(this._currentMedia.name);
+        console.log('Disabling repeat');
+        this.markPlayed(this.currentMedia.name);
         this._repeat = false;
+        this.onSessionUpdate();
     }
 
-    // Not meant to be called from outside of this class.
-    setCurrentMedia(media) {
+    toggleLoop() {
+        if (!this.loop && !this.repeat) {
+            this.enableLoop();
+            return;
+        }
+
+        if (this.repeat) {
+            this.disableRepeat();
+            this.disableLoop();
+            return;
+        }
+
+        if (this.loop) {
+            this.disableLoop();
+            this.enableRepeat();
+        }
+    }
+
+    get currentMedia() {
+        return this._currentMedia;
+    }
+
+    set currentMedia(media) {
         if (!this._element) return;
         this._currentMedia = media;
         this._element.src = media.object;
-        this._currentMedia.markPlayed();
+        this.currentMedia.markPlayed();
+        this.onSessionUpdate();
     }
 
     markAllUnplayed() {
-        this._playlist.forEach(media => this.markUnplayed(media.name));
+        this.playlist.forEach(media => this.markUnplayed(media.name));
+        this.onSessionUpdate();
     }
 
     getIndexOfCurrentMedia() {
-        for (let i = 0; i < this._playlist.length; i++) {
-            const media = this._playlist[i];
-            if (media.equals(this._currentMedia))
+        for (let i = 0; i < this.playlist.length; i++) {
+            const media = this.playlist[i];
+            if (media.equals(this.currentMedia))
                 return i;
         }
         return -1;
@@ -168,8 +213,8 @@ export default class Session {
 
         let index = this.getIndexOfCurrentMedia();
         index = index >= 0 ? index : 0;
-        index = (index + 1) % this._playlist.length;
-        this.setCurrentMedia(this._playlist[index]);
+        index = (index + 1) % this.playlist.length;
+        this.currentMedia = this.playlist[index];
     }
 
     loadPrev() {
@@ -178,45 +223,68 @@ export default class Session {
 
         let index = this.getIndexOfCurrentMedia();
         index = index >= 0 ? index : 0;
-        index = (index === 0 ? this._playlist.length : index) - 1;
-        this.setCurrentMedia(this._playlist[index]);
+        index = (index === 0 ? this.playlist.length : index) - 1;
+        this.currentMedia = this.playlist[index];
     }
 
     loadAuto() {
-        let unplayed = this._playlist.filter(media => !media.played);
-        if (unplayed.length === 0) {
-            // No unplayed media left. Test if looping is enabled.
-            if (this.loop) {
-                this.markAllUnplayed();
-                this.playAuto();
-                return;
-            }
+        if (this.repeat) {
+            this.currentMedia = this.currentMedia;
+            return;
         }
 
-        const index = Math.floor(this.shuffle ? Math.random() * unplayed.length : 0);
-        this.setCurrentMedia(unplayed[index]);
+        if (this.shuffle) {
+            let unplayed = this.playlist.filter(media => !(media.played));
+            const randomIndex = Math.floor(Math.random() * unplayed.length)
+            this.currentMedia = unplayed[randomIndex];
+            return;
+        }
+
+        this.loadNext();
+    }
+
+    handleAudioEnded() {
+        if (!this.playlistExhausted()) {
+            this.loadAuto();
+            this.triggerPlay();
+        } else {
+            if (this.repeat) {
+                this.loadAuto();
+                this.triggerPlay();
+                return;
+            }
+            if (this.loop) {
+                this.markAllUnplayed();
+                this.handleAudioEnded();
+            }
+        }
     }
 
     markPlayed(name) {
         const id = MediaResource.getIdForName(name);
         const media = this.findMediaById(id);
-        if (media)
+        if (media) {
             media.markPlayed();
+            this.onSessionUpdate();
+        }
     }
 
     markUnplayed(name) {
         const id = MediaResource.getIdForName(name);
         const media = this.findMediaById(id);
-        if (media)
+        if (media) {
             media.markUnplayed();
+            this.onSessionUpdate();
+        }
     }
 
     reset() {
         this._currentMedia = null;
-        this._playlist.forEach(media => media.dispose());
+        this.playlist.forEach(media => media.dispose());
         this._playlist = [];
         this.disableShuffle();
         this.disableRepeat();
         this.disableLoop();
+        this.onSessionUpdate();
     }
 }
