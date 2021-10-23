@@ -170,7 +170,7 @@ html, body {
 
 .row .title {
     display: flex;
-    justify-content: start;
+    justify-content: flex-start;
     align-items: center;
     padding: 0 10px;
     width: 75%;
@@ -543,7 +543,7 @@ input.progress {
     position: relative;
     cursor: pointer;
     margin: 0;
-    -webkit-appearance: none;
+    appearance: none;
 }
 
 .timer {
@@ -556,20 +556,35 @@ input.progress {
 }
 
 input.progress::-webkit-slider-runnable-track {
-    -webkit-appearance: none;
-    height: 5px;
+    height: .3rem;
+    margin-top: 1px;
+    background: #808080;
+}
+
+input.progress::-moz-range-track {
+    height: 3px;
     background: #808080;
 }
 
 input.progress::-webkit-slider-thumb {
-    -webkit-appearance: none;
+    appearance: none;
     cursor: pointer;
     bottom: 1px;
     border-radius: 50%;
     width: 13px;
     height: 13px;
     background: #1e1d1d;
-    margin: -4px 0;
+    margin: -3px 0;
+    z-index: 20;
+}
+
+input.progress::-moz-range-thumb {
+    cursor: pointer;
+    border: none;
+    border-radius: 50%;
+    width: 13px;
+    height: 13px;
+    background: #1e1d1d;
     z-index: 20;
 }
 
@@ -578,7 +593,7 @@ input.progress::-webkit-slider-thumb {
     display: inline;
     width: 1px;
     height: .3rem;
-    top: 4px;
+    top: 5px;
     background: #1e1d1d;
     left: 0;
     z-index: 1;

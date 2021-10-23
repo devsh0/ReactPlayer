@@ -11,7 +11,7 @@ export default function PlaylistView(props) {
         dummyInputRef.current.click();
     }
 
-    // Fixme: this callback won't be invoked if this batch of selected files
+    // Fixme: Callback won't be invoked if this batch of selected files
     //  doesn't differ from the last batch of selected files. So if someone
     //  decided to remove everything from the playlist and then add the same
     //  files again, nothing will be added. Everything's good if the current

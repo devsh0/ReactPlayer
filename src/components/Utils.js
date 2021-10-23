@@ -1,8 +1,8 @@
 import {MediaResource} from "./Session";
 
-// Fixme: media files will still be loaded if they were previously loaded.
-//  Session would reject including such files in the playlist and we'll end up
-//  with hanging resources that cannot be referenced.
+// Fixme: media files will be loaded into memory even if they were previously loaded.
+//  Session would reject including such files in the playlist if they already are in the
+//  playlist and we'll end up with hanging resources that cannot be referenced.
 export function fileToMediaResource(files) {
     const element = new Audio();
     const mediaResources = [];
@@ -16,10 +16,10 @@ export function fileToMediaResource(files) {
                 const media = new MediaResource(object, file.name, element.duration)
                 mediaResources.push(media);
                 index += 1;
-                if (index < files.length) {
-                    // Load next audio.
+                // This second check can probably be eliminated. Just tryin not to be too fancy :^)
+                if (index < files.length)
                     element.src = URL.createObjectURL(files[index]);
-                } else {
+                else {
                     console.log('All files loaded!');
                     resolve(mediaResources);
                 }

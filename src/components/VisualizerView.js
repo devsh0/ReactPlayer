@@ -4,6 +4,7 @@ import PlayerContext from "./PlayerContext";
 export default function VisualizerView() {
     const playerContext = useContext(PlayerContext);
     const canvasRef = useRef();
+    const canvasParentRef = useRef();
     const playingRef = useRef();
     playingRef.current = playerContext.isPlaying;
 
@@ -17,6 +18,15 @@ export default function VisualizerView() {
     }
 
     useEffect(() => {
+        function clearRAF() {
+            let id = requestAnimationFrame(() => {});
+            while(id--)
+                cancelAnimationFrame(id);
+        }
+
+        // Clean up previously scheduled RAFs so that Firefox doesn't go nuts.
+        clearRAF();
+
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
         const width = canvas.clientWidth;
@@ -46,19 +56,19 @@ export default function VisualizerView() {
                     context.beginPath();
                     context.moveTo(origin.x, origin.y);
                     context.lineTo(origin.x + xCoordinate, origin.y + yCoordinate);
-                    context.strokeStyle = `rgb(248, 243, 245)`;
+                    context.strokeStyle = `#fff`;
                     context.lineWidth = 2;
                     context.stroke();
                 }
+
                 requestAnimationFrame(draw);
             }
         }
-
         draw();
     }, [playerContext.isPlaying]);
 
     return (
-        <div className={'component visualizer'}>
+        <div ref={canvasParentRef} className={'component visualizer'}>
             <div className={'overlay'}></div>
             <canvas ref={canvasRef} width={200} height={200}>No canvas support</canvas>
             <div className={'center-background'}></div>

@@ -4,7 +4,7 @@ import VisualizerView from "./components/VisualizerView";
 import EqualizerView from "./components/EqualizerView";
 import PlaylistView from "./components/PlaylistView";
 import Filterpack from "./Filterpack";
-import Session, {MediaResource} from "./components/Session";
+import Session from "./components/Session";
 import PlayerContext from "./components/PlayerContext";
 import {PlayerView} from "./components/PlayerView";
 import {fileToMediaResource} from "./components/Utils";
@@ -50,8 +50,11 @@ export default function Player() {
 
 
     useEffect(() => {
-        const audioEl = playerState.audioElement;
-        const session = playerState.session;
+        const state = playerState;
+        const audioEl = state.audioElement;
+        state.audioStreamNode = state.audioContext.createMediaElementSource(audioEl);
+        state.filterpackNode.connect(state.audioStreamNode, state.analyserNode);
+        state.analyserNode.connect(state.destinationNode);
 
         audioEl.crossOrigin = 'anonymous';
         audioEl.addEventListener('canplay', handleAudioCanPlay);
@@ -60,6 +63,8 @@ export default function Player() {
 
         // Load a few static audio files from server.
         function loadMedia() {
+            const session = playerState.session;
+
             async function fetchMedia(url) {
                 const name = url.slice(2);
                 const response = await fetch(url);
@@ -84,18 +89,12 @@ export default function Player() {
 
     function loadAudioFromElement() {
         const state = {...stateRef.current};
-        const audioElement = state.audioElement;
-        state.audioStreamNode = state.audioContext.createMediaStreamSource(audioElement.captureStream());
-        state.filterpackNode.connect(state.audioStreamNode, state.analyserNode);
-        state.analyserNode.connect(state.destinationNode);
-        state.audioDuration = audioElement.duration;
-        audioElement.volume = 0.001;
+        state.audioDuration = state.audioElement.duration;
         updateState(state);
     }
 
     function unloadAudio() {
         const state = {...stateRef.current};
-        state.audioStreamNode.disconnect();
         state.audioDuration = 0;
         state.currentTime = 0;
         state.isPlaying = false;
