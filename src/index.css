@@ -3,6 +3,7 @@ html, body {
     height: 100%;
     padding: 0;
     margin: 0;
+    background: #333;
 }
 
 #root {
@@ -11,7 +12,6 @@ html, body {
     align-items: center;
     font-family: sans-serif;
     height: 100%;
-    background: #333;
 }
 
 /* Player */
@@ -377,6 +377,18 @@ html, body {
     top: 83%;
 }
 
+@media screen and (max-width: 400px) {
+    .band-container,
+    .scale-axis-container {
+        width: 28px;
+    }
+
+    .scale-axis-container .row {
+        width: 310px;
+        left: 35px;
+    }
+}
+
 .equalizer .row span {
     font-size: 10px;
     position: absolute;
@@ -557,24 +569,22 @@ input.progress {
 
 input.progress::-webkit-slider-runnable-track {
     height: .3rem;
-    margin-top: 1px;
     background: #808080;
 }
 
 input.progress::-moz-range-track {
-    height: 3px;
+    height: .3rem;
     background: #808080;
 }
 
 input.progress::-webkit-slider-thumb {
     appearance: none;
     cursor: pointer;
-    bottom: 1px;
     border-radius: 50%;
-    width: 13px;
-    height: 13px;
+    width: 14px;
+    height: 14px;
     background: #1e1d1d;
-    margin: -3px 0;
+    margin: -4px 0;
     z-index: 20;
 }
 
@@ -582,9 +592,10 @@ input.progress::-moz-range-thumb {
     cursor: pointer;
     border: none;
     border-radius: 50%;
-    width: 13px;
-    height: 13px;
+    width: 14px;
+    height: 14px;
     background: #1e1d1d;
+    margin: -4px 0;
     z-index: 20;
 }
 
@@ -593,9 +604,15 @@ input.progress::-moz-range-thumb {
     display: inline;
     width: 1px;
     height: .3rem;
-    top: 5px;
+    top: 4px;
     background: #1e1d1d;
     left: 0;
     z-index: 1;
     pointer-events: none;
+}
+
+@supports (-moz-appearance: none) {
+    .seek-slider-container .played-segment {
+        top: 6px;
+    }
 }
