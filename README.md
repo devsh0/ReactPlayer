@@ -1,70 +1,38 @@
-# Getting Started with Create React App
+# ReactPlayer
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Simple audio player written in HTML, CSS, and ReactJS.
 
-## Available Scripts
+[![react-player.gif](https://i.postimg.cc/QM9Q5kvN/react-player.gif)](https://postimg.cc/xkQNVH0B)
 
-In the project directory, you can run:
+Wanted to do a project after I started learning React a couple of weeks ago, and this is what I decided to build.
+The initial plan was to just write a very simple player with play/pause/resume support but one thing led to
+another, and I ended up implementing a visualizer, an equalizer and a playlist.
 
-### `npm start`
+# Possible Improvements
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+As a result of adding unplanned features on top of other unplanned features, the codebase evolved into something
+that is not so modular and can be improved in so many ways. Here are some of the issues that you would notice
+immediately:
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- One giant `index.css` that styles everything.
+- Alignment of various components is inconsistent in some places.
+- The player stutters very noticeably on Android (Chrome, not Firefox). This may have to do with the fact
+that audio passes through a 10-node filter chain to finally reach the analyzer and the output node, but I'm not sure.
+- Playlist view provides no visual feedback when tracks are loaded into memory, which can take a while.
+- To spin up a quick-n-dirty project, I relied on my IDE (Webstorm) to provide the necessary env when starting
+the project. The embedded Node.js, apparently, wasn't the latest LTS and I ended up pulling some deprecated packages
+with it.
+- No volume controller. Adding the controller isn't hard by any means; we can just link gain node at the tail end of the
+audio graph. But adding the visual element for one more controller means disturbing the symmetry of existing controllers
+on either side of the container. That's a funny reason to not have an important feature, I know.
+- Zero tests. Plus error checks are missing almost everywhere (hey, you can always hit refresh!). 
+- The overall usability on touch devices is below "awesome". Tuning the EQ bands requires clicking at the right
+location because the vertical sliders are done manually and I was too lazy to implement a touch slider. Libraries
+might have made things easier, but the plan was to use only React.
+- Some things in the UI just don't make sense. Two control buttons that are responsible for switching the current
+view are far apart. One click on the view controller buttons activates the corresponding view, two clicks deactivates
+it and switches to the default view (Visualizer).
+- Three binary audio files are part of the repository because I was under the impression that that's the only
+way to sneak these files into Netlify at the time of deployment.
+- The whole thing is done by a React noob. There possibly are more things than I can notice and list here. PRs are
+welcome, if you're interested in making things suck less.
