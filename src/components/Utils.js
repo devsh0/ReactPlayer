@@ -45,3 +45,42 @@ export function getFormattedMediaName(name) {
     name = name.length > 40 ? name.slice(0, 40) + '...' : name;
     return name;
 }
+
+// Slower than grandma but who cares..?!
+export function filterMedia(key, mediaNames) {
+    key = key.trim().toLowerCase();
+    if (!key) {
+        let i = 0;
+        return mediaNames.map(_ => {
+            return {index: i++, matchIndices: []};
+        });
+    }
+
+    const matches = [];
+    for (let i = 0; i < mediaNames.length; i++) {
+        let name = mediaNames[i].toLowerCase();
+        const matchIndices = [];
+        while (name.length < key.length)
+            name += '$';
+
+        for (let j = 0; j <= name.length - key.length; j++) {
+            const piece = name.slice(j, j + key.length);
+            if (piece === key) {
+                // We aren't really using these indices though.
+                matchIndices.push({
+                    start: j,
+                    end: j + key.length
+                })
+            }
+        }
+
+        if (matchIndices.length > 0) {
+            matches.push({
+                index: i,
+                matchIndices: matchIndices
+            })
+        }
+    }
+
+    return matches;
+}

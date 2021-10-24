@@ -1,10 +1,11 @@
-import {useContext, useRef} from "react";
+import {useContext, useRef, useState} from "react";
 import PlayerContext from "./PlayerContext";
 import {IoMdClose} from "react-icons/all";
-import {fileToMediaResource, getFormattedMediaName, getFormattedMediaTime} from "./Utils";
+import {fileToMediaResource, filterMedia, getFormattedMediaName, getFormattedMediaTime} from "./Utils";
 
 export default function PlaylistView(props) {
     const playerContext = useContext(PlayerContext);
+    const [searchKey, setSearchKey] = useState('');
     const dummyInputRef = useRef();
 
     function handleAudioInput() {
@@ -28,10 +29,20 @@ export default function PlaylistView(props) {
         props.onAudioRemoved(media);
     }
 
+    function handleSearchKeyChanged(event) {
+        const input = event.target.value;
+        setSearchKey(input);
+    }
+
     function getAudioRows() {
         let audioList = [];
         const session = playerContext.session;
-        for (const media of session.playlist) {
+        const names = session.playlist.map(media => media.name);
+        const matches = filterMedia(searchKey, names);
+
+        for (let i = 0; i < matches.length; i++) {
+            const match = matches[i];
+            const media = session.playlist[match.index];
             const current = session.currentMedia;
             const playingThis = current && current.equals(media);
             const extraClasses = playingThis ? 'current' : '';
@@ -55,7 +66,7 @@ export default function PlaylistView(props) {
                    onChange={handleFileSelect}/>
             <div className={'overlay'}></div>
             <div className={'header-container'}>
-                <input className={'input search'} type={'text'} placeholder={'Search...'}/>
+                <input className={'input search'} type={'text'} placeholder={'Search...'} onChange={handleSearchKeyChanged}/>
                 <div className={'button-container'}>
                     <button className={'btn add-song'} onClick={handleAudioInput}>Add</button>
                     <button className={'btn remove-song'} onClick={props.onPlaylistCleared}>Clear</button>
