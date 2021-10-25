@@ -1,12 +1,22 @@
 # ReactPlayer
 
-Simple audio player written in HTML, CSS, and ReactJS.
+Simple audio player written in HTML, CSS, and React.
 
 [![react-player.gif](https://i.postimg.cc/QM9Q5kvN/react-player.gif)](https://postimg.cc/xkQNVH0B)
 
 Wanted to do a project after I started learning React a couple of weeks ago, and this is what I decided to build.
 The initial plan was to just write a very simple player with play/pause/resume support but one thing led to
 another, and I ended up implementing a visualizer, an equalizer and a playlist.
+
+# Running the App
+
+1. Clone the project.
+```
+git clone https://github.com/devsh0/ReactPlayer.git
+```
+2. `cd` to the directory where you cloned the project.
+3. `npm install` to install the dependencies.
+4. `npm start` to start the app.
 
 # Possible Improvements
 
@@ -34,5 +44,5 @@ view are far apart. One click on the view controller buttons activates the corre
 it and switches to the default view (Visualizer).
 - Three binary audio files are part of the repository because I was under the impression that that's the only
 way to sneak these files into Netlify at the time of deployment.
-- The whole thing is done by a React noob. There possibly are more things than I can notice and list here. PRs are
-welcome, if you're interested in making things suck less.
+
+Please consider opening a PR if you would you like to improve something about this app.
