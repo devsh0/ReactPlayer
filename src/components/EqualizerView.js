@@ -12,19 +12,15 @@ export default function EqualizerView({
 }) {
   const playerContext = useContext(PlayerContext);
 
-  const getBands = () => {
-    let bands = [];
-    playerContext.filterpackNode.getFilters().forEach((filter, i) => {
-      bands.push(
-        <EqualizerBand
-          key={filter.getFrequency()}
-          index={i}
-          onBandTuned={onFilterTuned}
-        />
-      );
-    });
-    return bands;
-  };
+  const bands = playerContext.filterpackNode
+    .getFilters()
+    .map((filter, i) => (
+      <EqualizerBand
+        key={filter.getFrequency()}
+        index={i}
+        onBandTuned={onFilterTuned}
+      />
+    ));
 
   return (
     <div className={"component equalizer"}>
@@ -37,7 +33,7 @@ export default function EqualizerView({
 
       <div className={"band-array-container"}>
         <ScaleAxis />
-        {getBands()}
+        {bands}
       </div>
     </div>
   );
