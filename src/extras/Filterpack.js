@@ -40,19 +40,20 @@ class Filter {
 }
 
 export default class Filterpack {
+  static bands = [32, 64, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
+
   constructor(context) {
     this.enabled = true;
     this.count = 10;
-    this.bands = [32, 64, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
-    this.lowshelf = new Filter(context, "lowshelf", this.bands[0], 0);
+    this.lowshelf = new Filter(context, "lowshelf", Filterpack.bands[0], 0);
     this.highshelf = new Filter(
       context,
       "highshelf",
-      this.bands[this.count - 1],
+      Filterpack.bands[this.count - 1],
       0
     );
 
-    this.peakingFilterArray = this.bands
+    this.peakingFilterArray = Filterpack.bands
       .filter((f, i) => i > 0 && i < this.count - 1)
       .map((freq) => new Filter(context, "peaking", freq, 0));
 
