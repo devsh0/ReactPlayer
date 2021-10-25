@@ -1,6 +1,6 @@
 import { useContext, useRef, useState } from "react";
 import PlayerContext from "./PlayerContext";
-import { IoMdClose } from "react-icons/all";
+import { IoMdClose as RemoveIcon } from "react-icons/all";
 import {
   fileToMediaResource,
   filterMedia,
@@ -68,7 +68,7 @@ export default function PlaylistView(props) {
               className={"remove"}
               onClick={(e) => handleAudioRemoved(e, media)}
             >
-              <IoMdClose />
+              <RemoveIcon />
             </button>
           </div>
         </div>

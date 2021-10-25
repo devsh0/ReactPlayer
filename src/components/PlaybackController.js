@@ -1,10 +1,10 @@
 import {
-  BiShuffle,
-  ImEqualizer2,
-  MdSkipNext,
-  MdSkipPrevious,
-  RiPlayList2Fill,
-  RiRepeatFill,
+  BiShuffle as ShuffleIcon,
+  ImEqualizer2 as EqualizerIcon,
+  MdSkipNext as NextIcon,
+  MdSkipPrevious as PrevIcon,
+  RiPlayList2Fill as PlaylistIcon,
+  RiRepeatFill as LoopIcon,
 } from "react-icons/all";
 import { BsPauseFill, BsPlayFill } from "react-icons/bs";
 import React, { useContext } from "react";
@@ -35,7 +35,7 @@ export default function PlaybackController({
           className={"ctrl-btn shuffle " + (shuffling ? "tapped" : "")}
           onClick={onToggleShuffle}
         >
-          <BiShuffle />
+          <ShuffleIcon />
         </button>
         <button
           title={"Playlist"}
@@ -46,12 +46,12 @@ export default function PlaybackController({
             )
           }
         >
-          <RiPlayList2Fill />
+          <PlaylistIcon />
         </button>
       </div>
       <div className={"section center"}>
         <button title={"Prev"} className={"ctrl-btn"} onClick={onPrev}>
-          <MdSkipPrevious />
+          <PrevIcon />
         </button>
         <button
           title={playing ? "Pause" : "Play"}
@@ -61,7 +61,7 @@ export default function PlaybackController({
           {playing ? <BsPauseFill /> : <BsPlayFill />}
         </button>
         <button title={"Next"} className={"ctrl-btn"} onClick={onNext}>
-          <MdSkipNext />
+          <NextIcon />
         </button>
       </div>
       <div className={"section end"}>
@@ -72,14 +72,14 @@ export default function PlaybackController({
             onViewSwitched(isEqView ? ViewEnum.Visualizer : ViewEnum.Equalizer)
           }
         >
-          <ImEqualizer2 />
+          <EqualizerIcon />
         </button>
         <button
           title={"Repeat/Loop"}
           onClick={onToggleLoop}
           className={"ctrl-btn " + (repeatingOrLooping ? "tapped" : "")}
         >
-          <RiRepeatFill />
+          <LoopIcon />
           <span className={"repeat-indicator " + (repeating ? "show" : "")}>
             1
           </span>
