@@ -42,7 +42,5 @@ might have made things easier, but the plan was to use only React.
 - Some things in the UI just don't make sense. Two control buttons that are responsible for switching the current
 view are far apart. One click on the view controller buttons activates the corresponding view, two clicks deactivates
 it and switches to the default view (Visualizer).
-- Three binary audio files are part of the repository because I was under the impression that that's the only
-way to sneak these files into Netlify at the time of deployment.
 
 Please consider opening a PR if you would you like to improve something about this app.
