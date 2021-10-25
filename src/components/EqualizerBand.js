@@ -1,10 +1,9 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import PlayerContext from "./PlayerContext";
 
-const MAX_GAIN = 12; // dB
-let g_previousDragY = 0;
-
 export default function EqualizerBand({ index, onBandTuned }) {
+  const MAX_GAIN = 12; // dB
+
   const playerContext = useContext(PlayerContext);
   const gain = playerContext.equalizer.currentPreset.gains[index];
 
@@ -13,6 +12,7 @@ export default function EqualizerBand({ index, onBandTuned }) {
   const knobRef = useRef();
 
   const [dragging, setDragging] = useState(false);
+  const [previousDragY, setPreviousDragY] = useState(0);
 
   const gainToFillHeight = (gain) => {
     const boxHeight = boxRef.current.clientHeight;
@@ -54,18 +54,18 @@ export default function EqualizerBand({ index, onBandTuned }) {
 
   const handleDragStart = (event) => {
     if (!playerContext.equalizer.isEnabled) return;
-    g_previousDragY = event.clientY;
+    setPreviousDragY(event.clientY);
     setDragging(true);
   };
 
   const handleMouseMove = (event) => {
     if (dragging) {
       const clientY = event.clientY;
-      const displacement = g_previousDragY - clientY;
+      const displacement = previousDragY - clientY;
       const newFillHeight = fillRef.current.clientHeight + displacement;
       const newGain = fillHeightToGain(newFillHeight);
       onBandTuned(index, newGain);
-      g_previousDragY = clientY;
+      setPreviousDragY(clientY);
     }
   };
 
