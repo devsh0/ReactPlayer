@@ -464,7 +464,7 @@ html, body {
     height: 55px;
 }
 
-.playback-controller .section {
+.playback-controller section {
     padding: 0;
 }
 
@@ -500,7 +500,7 @@ html, body {
     transition: all ease-in-out 150ms;
 }
 
-.section.center .ctrl-btn {
+section.center .ctrl-btn {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -521,8 +521,8 @@ html, body {
     color: white;
 }
 
-.section.start,
-.section.end {
+section.start,
+section.end {
     padding: 0 10px;
 }
 

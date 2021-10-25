@@ -29,7 +29,7 @@ export default function PlaybackController({
 
   return (
     <div className={"playback-controller"}>
-      <div className={"section start"}>
+      <section className={"start"}>
         <button
           title={"Shuffle"}
           className={"ctrl-btn shuffle " + (shuffling ? "tapped" : "")}
@@ -48,8 +48,8 @@ export default function PlaybackController({
         >
           <PlaylistIcon />
         </button>
-      </div>
-      <div className={"section center"}>
+      </section>
+      <section className={"center"}>
         <button title={"Prev"} className={"ctrl-btn"} onClick={onPrev}>
           <PrevIcon />
         </button>
@@ -63,8 +63,8 @@ export default function PlaybackController({
         <button title={"Next"} className={"ctrl-btn"} onClick={onNext}>
           <NextIcon />
         </button>
-      </div>
-      <div className={"section end"}>
+      </section>
+      <section className={"end"}>
         <button
           title={"Equalizer"}
           className={"ctrl-btn eq " + (isEqView ? "tapped" : "")}
@@ -84,7 +84,7 @@ export default function PlaybackController({
             1
           </span>
         </button>
-      </div>
+      </section>
     </div>
   );
 }
