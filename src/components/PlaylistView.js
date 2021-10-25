@@ -6,7 +6,7 @@ import {
   filterMedia,
   getFormattedMediaName,
   getFormattedMediaTime,
-} from "./Utils";
+} from "../extras/Utils";
 
 export default function PlaylistView(props) {
   const playerContext = useContext(PlayerContext);

@@ -3,11 +3,11 @@ import Controller from "./Controller";
 import VisualizerView from "./VisualizerView";
 import EqualizerView from "./EqualizerView";
 import PlaylistView from "./PlaylistView";
-import Filterpack from "./Filterpack";
-import Session from "./Session";
+import Filterpack from "../extras/Filterpack";
+import Session from "../extras/Session";
 import PlayerContext from "./PlayerContext";
 import { ViewEnum } from "./ViewEnum";
-import { fileToMediaResource } from "./Utils";
+import { fileToMediaResource } from "../extras/Utils";
 import "../index.css";
 
 let _INITIAL_STATE_ = null;
