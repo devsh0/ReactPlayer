@@ -189,11 +189,11 @@ export default class Session {
   }
 
   getIndexOfCurrentMedia() {
-    for (let i = 0; i < this.playlist.length; i++) {
-      const media = this.playlist[i];
-      if (media.equals(this.currentMedia)) return i;
-    }
-    return -1;
+    let index = -1;
+    this.playlist.forEach((media, i) => {
+      if (media.equals(this.currentMedia)) index = i;
+    });
+    return index;
   }
 
   loadNext() {

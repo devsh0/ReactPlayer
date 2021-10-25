@@ -16,11 +16,12 @@ export default function PresetTray({ onPresetChanged }) {
   const executeSelect = (presetKey, target) => {
     if (!target) {
       const parent = selected.current.parentNode;
-      for (let child of parent.children)
+      for (let child of parent.children) {
         if (child.innerText.toLowerCase() === presetKey) {
           target = child;
           break;
         }
+      }
     }
     if (!target) throw new Error("Preset key did not match any item!");
     selected.current.classList.remove("selected");

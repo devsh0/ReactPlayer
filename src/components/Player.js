@@ -10,6 +10,8 @@ import { ViewEnum } from "./ViewEnum";
 import { fileToMediaResource } from "../extras/Utils";
 import "../index.css";
 
+// Let's keep this outside since we don't want to re-create certain nodes
+// in the state (e.g.: Audio, AudioContext, Filterpack) each time state is updated.
 let _INITIAL_STATE_ = null;
 
 const init = () => {
@@ -94,7 +96,7 @@ export default function Player() {
               session.enqueueMedia(resource)
             );
           })
-          .catch((error) => console.log(error.message));
+          .catch((error) => console.error(error.message));
       });
     }
 
@@ -169,7 +171,7 @@ export default function Player() {
     if (!state.session.canPlay()) return;
     state.audioElement.play();
     // Logging does it for now.
-    state.audioContext.resume().catch((error) => console.log(error));
+    state.audioContext.resume().catch((error) => console.error(error.message));
     state.isPlaying = true;
     stateRef.current = state;
     updateState(state);
