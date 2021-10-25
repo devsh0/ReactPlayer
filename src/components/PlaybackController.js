@@ -11,25 +11,26 @@ export default function PlaybackController({onPlayPause, onViewSwitched, onNext,
     const shuffling = playerContext.session.shuffle;
     const repeating = playerContext.session.repeat;
     const repeatingOrLooping = repeating || playerContext.session.loop;
+    const playing = playerContext.isPlaying;
 
     return (
         <div className={'playback-controller'}>
             <div className={'section start'}>
-                <button className={'ctrl-btn shuffle ' + (shuffling ? 'tapped' : '')} onClick={onToggleShuffle}><BiShuffle/></button>
-                <button className={'ctrl-btn playlist ' + (isPlaylistView ? 'tapped' : '')}
+                <button title={'Shuffle'} className={'ctrl-btn shuffle ' + (shuffling ? 'tapped' : '')} onClick={onToggleShuffle}><BiShuffle/></button>
+                <button title={'Playlist'} className={'ctrl-btn playlist ' + (isPlaylistView ? 'tapped' : '')}
                         onClick={_ => onViewSwitched(isPlaylistView ? ViewEnum.Visualizer : ViewEnum.Playlist)}><RiPlayList2Fill/></button>
             </div>
             <div className={'section center'}>
-                <button className={'ctrl-btn'} onClick={onPrev}><MdSkipPrevious/></button>
-                <button className={'ctrl-btn'} onClick={onPlayPause}>
-                    {playerContext.isPlaying ? <BsPauseFill/> : <BsPlayFill/>}
+                <button title={'Prev'} className={'ctrl-btn'} onClick={onPrev}><MdSkipPrevious/></button>
+                <button title={playing ? 'Pause' : 'Play'} className={'ctrl-btn'} onClick={onPlayPause}>
+                    {playing ? <BsPauseFill/> : <BsPlayFill/>}
                 </button>
-                <button className={'ctrl-btn'} onClick={onNext}><MdSkipNext/></button>
+                <button title={'Next'} className={'ctrl-btn'} onClick={onNext}><MdSkipNext/></button>
             </div>
             <div className={'section end'}>
-                <button className={'ctrl-btn eq ' + (isEqView ? 'tapped' : '')}
+                <button title={'Equalizer'} className={'ctrl-btn eq ' + (isEqView ? 'tapped' : '')}
                         onClick={_ => onViewSwitched(isEqView ? ViewEnum.Visualizer : ViewEnum.Equalizer)}><ImEqualizer2/></button>
-                <button onClick={onToggleLoop} className={'ctrl-btn ' + (repeatingOrLooping ? 'tapped' : '')}><RiRepeatFill/>
+                <button title={'Repeat/Loop'} onClick={onToggleLoop} className={'ctrl-btn ' + (repeatingOrLooping ? 'tapped' : '')}><RiRepeatFill/>
                     <span className={'repeat-indicator ' + (repeating ? 'show' : '')}>1</span>
                 </button>
             </div>

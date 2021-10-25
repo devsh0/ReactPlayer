@@ -52,7 +52,7 @@ export default function PlaylistView(props) {
                     <div className={'title'}>{getFormattedMediaName(media.name)}</div>
                     <div className={'metadata'}>
                         <span className={'duration'}>{getFormattedMediaTime(media.duration)}</span>
-                        <button className={'remove'} onClick={(e) => handleAudioRemoved(e, media)}><IoMdClose/></button>
+                        <button title={'Remove'} className={'remove'} onClick={(e) => handleAudioRemoved(e, media)}><IoMdClose/></button>
                     </div>
                 </div>
             ));
@@ -68,8 +68,8 @@ export default function PlaylistView(props) {
             <div className={'header-container'}>
                 <input className={'input search'} type={'text'} placeholder={'Search...'} onChange={handleSearchKeyChanged}/>
                 <div className={'button-container'}>
-                    <button className={'btn add-song'} onClick={handleAudioInput}>Add</button>
-                    <button className={'btn remove-song'} onClick={props.onPlaylistCleared}>Clear</button>
+                    <button title={'Add Tracks'} className={'btn add-song'} onClick={handleAudioInput}>Add</button>
+                    <button title={'Clear Playlist'} className={'btn remove-song'} onClick={props.onPlaylistCleared}>Clear</button>
                 </div>
             </div>
             <div className={'playlist-container'}>
