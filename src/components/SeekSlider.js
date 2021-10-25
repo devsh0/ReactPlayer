@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef } from "react";
 import PlayerContext from "./PlayerContext";
-import { getFormattedMediaTime } from "../extras/Utils";
+import { getFormattedMediaTime } from "../helpers/Utils";
 
 export default function SeekSlider({ onSeek }) {
   const playerContext = useContext(PlayerContext);

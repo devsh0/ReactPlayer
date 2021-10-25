@@ -3,11 +3,11 @@ import Controller from "./Controller";
 import VisualizerView from "./VisualizerView";
 import EqualizerView from "./EqualizerView";
 import PlaylistView from "./PlaylistView";
-import Filterpack from "../extras/Filterpack";
-import Session from "../extras/Session";
+import Filterpack from "../helpers/Filterpack";
+import Session from "../helpers/Session";
 import PlayerContext from "./PlayerContext";
 import { ViewEnum } from "./ViewEnum";
-import { fileToMediaResource } from "../extras/Utils";
+import { fileToMediaResource } from "../helpers/Utils";
 import "../index.css";
 
 // Let's keep this outside since we don't want to re-create certain nodes
