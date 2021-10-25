@@ -153,7 +153,7 @@ html, body {
     width: 100%;
     padding: 5px 0;
     font-size: 12px;
-    box-shadow: 0 0 2px rgba(0,0, 0, .5);
+    box-shadow: 0 0 2px rgba(0, 0, 0, .5);
     color: #72869f;
     cursor: pointer;
     transition: all ease-in-out 100ms;
@@ -227,7 +227,7 @@ html, body {
     box-shadow: 0 0 2px 1px rgba(0, 0, 0, .8);
 }
 
-.preset-container  .btn.disabled:hover {
+.preset-container .btn.disabled:hover {
     box-shadow: 0 0 2px rgba(0, 0, 0, 1);
 }
 
