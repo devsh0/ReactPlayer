@@ -6,7 +6,7 @@ import PlaylistView from "./PlaylistView";
 import Filterpack from "../helpers/Filterpack";
 import Session from "../helpers/Session";
 import PlayerContext from "./PlayerContext";
-import { ViewEnum } from "./ViewEnum";
+import { Views } from "./Views";
 import { fileToMediaResource } from "../helpers/Utils";
 import "../index.css";
 
@@ -33,7 +33,7 @@ const init = () => {
     audioDuration: 0,
     currentTime: 0,
     isPlaying: false,
-    currentView: ViewEnum.Visualizer,
+    currentView: Views.Visualizer,
     equalizer: {
       isEnabled: filterpack.isEnabled(),
       currentPreset: filterpack.getCurrentPreset(),
@@ -269,7 +269,7 @@ export default function Player() {
 
   function getView() {
     switch (playerState.currentView) {
-      case ViewEnum.Equalizer:
+      case Views.Equalizer:
         return (
           <EqualizerView
             onPresetChanged={handlePresetChanged}
@@ -278,7 +278,7 @@ export default function Player() {
             onEqResetRequested={handleEqResetRequested}
           />
         );
-      case ViewEnum.Playlist:
+      case Views.Playlist:
         return (
           <PlaylistView
             onMediaResourceLoaded={handleMediaResourceLoaded}

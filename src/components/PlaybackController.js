@@ -9,7 +9,7 @@ import {
 import { BsPauseFill, BsPlayFill } from "react-icons/bs";
 import React, { useContext } from "react";
 import PlayerContext from "./PlayerContext";
-import { ViewEnum } from "./ViewEnum";
+import { Views } from "./Views";
 
 export default function PlaybackController({
   onPlayPause,
@@ -20,8 +20,8 @@ export default function PlaybackController({
   onToggleLoop,
 }) {
   const playerContext = useContext(PlayerContext);
-  const isEqView = playerContext.currentView === ViewEnum.Equalizer;
-  const isPlaylistView = playerContext.currentView === ViewEnum.Playlist;
+  const isEqView = playerContext.currentView === Views.Equalizer;
+  const isPlaylistView = playerContext.currentView === Views.Playlist;
   const shuffling = playerContext.session.shuffle;
   const repeating = playerContext.session.repeat;
   const repeatingOrLooping = repeating || playerContext.session.loop;
@@ -41,9 +41,7 @@ export default function PlaybackController({
           title={"Playlist"}
           className={"ctrl-btn playlist " + (isPlaylistView ? "tapped" : "")}
           onClick={(_) =>
-            onViewSwitched(
-              isPlaylistView ? ViewEnum.Visualizer : ViewEnum.Playlist
-            )
+            onViewSwitched(isPlaylistView ? Views.Visualizer : Views.Playlist)
           }
         >
           <PlaylistIcon />
@@ -69,7 +67,7 @@ export default function PlaybackController({
           title={"Equalizer"}
           className={"ctrl-btn eq " + (isEqView ? "tapped" : "")}
           onClick={(_) =>
-            onViewSwitched(isEqView ? ViewEnum.Visualizer : ViewEnum.Equalizer)
+            onViewSwitched(isEqView ? Views.Visualizer : Views.Equalizer)
           }
         >
           <EqualizerIcon />
