@@ -39,20 +39,6 @@ class Filter {
   }
 }
 
-const getPresets = () => {
-  return [
-    { key: "custom", gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { key: "bass", gains: [5.8, 4.5, 4, 2.9, 0.5, 0, 0, 0, 0, 0] },
-    { key: "bass 2x", gains: [6, 6, 5, 3, 1, 0, 0, 0, 0, 0] },
-    { key: "classic", gains: [5.2, 3.1, 3, 2.9, -1.5, -1.5, 0, 2.9, 3.1, 3.3] },
-    { key: "dance", gains: [3.2, 6.2, 5.8, 0, 2.6, 4.4, 5.7, 3.5, 3.2, 0] },
-    { key: "party", gains: [4.5, 1.7, 1, 0, 0, 2.5, 4, 5, 5, 6] },
-    { key: "pop", gains: [-2, -1.8, 0, 1.2, 4.2, 4.2, 1.2, 0, -1.8, -2] },
-    { key: "rock", gains: [5, 3, 2, 1.8, -1.8, -2, 0, 1.6, 3, 3.8] },
-    { key: "jazz", gains: [4.5, 2.9, 1.5, 1.8, -1.5, -1.5, 0, 1.6, 2.8, 3.8] },
-  ];
-};
-
 export default class Filterpack {
   constructor(context) {
     this.enabled = true;
@@ -65,16 +51,35 @@ export default class Filterpack {
       this.bands[this.count - 1],
       0
     );
+
     this.peakingFilterArray = this.bands
       .filter((f, i) => i > 0 && i < this.count - 1)
       .map((freq) => new Filter(context, "peaking", freq, 0));
+
     this.filterArray = [
       this.lowshelf,
       ...this.peakingFilterArray,
       this.highshelf,
     ];
 
-    this.presets = getPresets();
+    this.presets = [
+      { key: "custom", gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+      { key: "bass", gains: [5.8, 4.5, 4, 2.9, 0.5, 0, 0, 0, 0, 0] },
+      { key: "bass 2x", gains: [6, 6, 5, 3, 1, 0, 0, 0, 0, 0] },
+      {
+        key: "classic",
+        gains: [5.2, 3.1, 3, 2.9, -1.5, -1.5, 0, 2.9, 3.1, 3.3],
+      },
+      { key: "dance", gains: [3.2, 6.2, 5.8, 0, 2.6, 4.4, 5.7, 3.5, 3.2, 0] },
+      { key: "party", gains: [4.5, 1.7, 1, 0, 0, 2.5, 4, 5, 5, 6] },
+      { key: "pop", gains: [-2, -1.8, 0, 1.2, 4.2, 4.2, 1.2, 0, -1.8, -2] },
+      { key: "rock", gains: [5, 3, 2, 1.8, -1.8, -2, 0, 1.6, 3, 3.8] },
+      {
+        key: "jazz",
+        gains: [4.5, 2.9, 1.5, 1.8, -1.5, -1.5, 0, 1.6, 2.8, 3.8],
+      },
+    ];
+
     this.currentPreset = this.presets[0];
     this.gainsWhenDisabled = [];
   }
