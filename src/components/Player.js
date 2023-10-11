@@ -84,7 +84,7 @@ export default function Player() {
       }
 
       // Preload a few static audio files from server.
-      const preloadMediaUrls = ["./biology.ogg", "./maria.ogg"];
+      const preloadMediaUrls = ["./senorita.ogg", "./maria.ogg"];
 
       fetchMedia(preloadMediaUrls).then((files) => {
         fileToMediaResource(files)
