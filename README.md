@@ -1,5 +1,7 @@
 # ReactPlayer
 
+**Demo: https://blissful-curran-e27ea4.netlify.app/**
+
 Simple audio player written in HTML, CSS, and React.
 
 [![react-player.gif](https://i.postimg.cc/QM9Q5kvN/react-player.gif)](https://postimg.cc/xkQNVH0B)
@@ -25,6 +27,7 @@ that is not so modular and can be improved in so many ways. Here are some of the
 immediately:
 
 - One giant `index.css` that styles everything.
+- Doesn't show the name of the song that is currently playing.
 - Alignment of various components is inconsistent in some places.
 - The player stutters very noticeably on Android (Chrome, not Firefox). This may have to do with the fact
 that audio passes through a 10-node filter chain to finally reach the analyzer and the output node, but I'm not sure.
